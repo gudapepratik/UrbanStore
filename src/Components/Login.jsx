@@ -65,11 +65,11 @@ function Login() {
     <>
       <div className=" w-full max-h-screen flex">
         {isloading && <Loader/>}
-        <div className="w-9/12 overflow-hidden">
+        <div className="w-9/12 hidden md:block overflow-hidden">
             <img src={loginimg} alt="" className="-translate-y-28"/>
         </div>
 
-          <div className=" w-4/12 h-full mt-20">
+          <div className="w-full md:w-4/12 h-full mt-20">
             <div>
               <form
                 onSubmit={handleSubmit(Onsubmit)}

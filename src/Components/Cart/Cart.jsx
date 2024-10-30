@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { loginimg } from "../../assets/asset";
+import { emptycartimg, loginimg } from "../../assets/asset";
 import { RiCloseLine, RiCrosshairLine, RiCrossLine } from "@remixicon/react";
 import CartItem from "./CartItem";
 import Footer from "../Footer";
 import { useDispatch, useSelector } from "react-redux";
 import service from "../../appwrite/config";
+import { useLocation } from "react-router";
 import { addToCart, clearCart, setIsNewItemAdded } from "../../store/cartSlice";
 
 function Cart() {
@@ -23,8 +24,18 @@ function Cart() {
   const [imgurls, setImgUrls] = useState([])
 
   const [isfetchdone, SetIsFetchDone] = useState(false); 
+  const [isloading, SetIsLoading] = useState(false); 
 
   const [getproductids, setGetProductids] = useState(false);
+
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }, [location])
 
   // const fetchProducts = async () => {
   //     try {
@@ -107,11 +118,12 @@ function Cart() {
           );    
         }); 
         console.log(cartItems)
-      }
+      } 
     //   console.log(cartItems);
       SetIsFetchDone(true);
     } catch (error) {
       console.error("Error fetching product:", error);
+      SetIsFetchDone(false);
     }
   };
 
@@ -136,7 +148,11 @@ function Cart() {
         setProductIds(productIdsArray);
         setCartDocIds(cartdocs);
         if (getproductids && productids.length > 0) {
+          SetIsLoading(true);
             fetchProducts();
+            SetIsLoading(false);
+        } else{
+          SetIsFetchDone(true)
         }
         setGetProductids(true);
       }
@@ -159,23 +175,25 @@ function Cart() {
 
   return (
     <>
-      {userStatus ? (
-        <div className="w-full  h-[calc(100vh-100px)] mb-40 overflow-y-hidden scrollbar-hide">
-          <div className="w-full flex h-full">
+      {userStatus && cartItems.length > 0 ? (
+        <div className="flex flex-col">
+        <div className="w-full flex md:h-[calc(100vh-100px)] mb-40 overflow-y-hidden scrollbar-hide">
+          <div className="w-full  flex flex-col gap-20 md:gap-0 h-screen md:flex-row">
             {/* products in cart  */}
-            <div className="w-4/6  h-full px-5">
-              <div className="flex flex-col  max-h-full gap-5 my-4 overflow-y-scroll scrollbar-hide">
+            <div className="md:w-4/6 w-full md:h-full md:pb-32 h-[calc(100vh-55vh)] px-5">
+              <div className="flex flex-col max-h-full gap-5 my-4 overflow-y-scroll scrollbar-hide">
                 {cartItems?.map((item, index) => (
                   // console.log(item)
                   <CartItem key={index} product={item} />
                 ))}
+                
               </div>
             </div>
 
             {/* checkout section  */}
-            <div className="w-2/6 mx-10 mt-4 flex flex-col gap-3 h-full">
+            <div className="w-full md:w-2/6 md:mx-10 mt-4 px-6 flex flex-col gap-3 h-full">
               <h1 className="font-DMSans font-bold text-2xl">Order Summary</h1>
-              <div>
+              <div className="shadow-inner">
                 <div className="w-full border-[1px] border-b-0 flex flex-col border-zinc-400 ">
                   {/* subtotal  */}
                   <div className="flex items-center justify-between p-3 border-b-[1px] border-zinc-400">
@@ -196,7 +214,7 @@ function Cart() {
                       Total
                     </h2>
                     <h3 className="font-DMSans text-md font-bold text-zinc-500">
-                    ₹{totalcost+(totalcost*0.18)}
+                    ₹{(totalcost+(totalcost*0.18)).toFixed(2)}
                     </h3>
                   </div>
 
@@ -209,12 +227,42 @@ function Cart() {
             </div>
           </div>
         </div>
+        </div>
       ) : (
-        <div className="w-full h-screen flex items-center justify-center">
+        (!userStatus ? 
+          <div className="w-full h-screen flex items-center justify-center">
           <h1 className="font-DMSans font-bold text-4xl text-rose-600">
             User Not Logged in{" "}
           </h1>
         </div>
+        :
+
+        (isfetchdone ? 
+          
+          (cartItems &&
+
+        <div className="w-screen h-screen flex items-center justify-center ">
+                  <div className="flex relative -top-40 flex-col items-center selection:bg-none justify-center max-w-full">
+                    <img
+                      src={emptycartimg}
+                      alt="empty bag image"
+                      className="size-32 mb-4"
+                    />
+                    <h1 className="selection:bg-rose-500 selection:text-white font-DMSans font-bold text-xl text-zinc-800 text-center">
+                      Your cart is empty
+                    </h1>
+                    <h1 className="selection:bg-rose-500 selection:text-white font-DMSans font-normal text-zinc-400 text-center">
+                      Looks like you have not added anything to your cart. Go ahead and explore top categories
+                    </h1>
+                  </div>
+                </div>
+          )
+          :
+            <div className="w-full h-screen flex justify-center items-center ">
+            <p className="font-bold font-DMSans text-3xl -translate-y-10 text-rose-500">Loading........</p>
+            </div>
+        )
+        )
       )}
 
       <Footer />

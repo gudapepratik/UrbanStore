@@ -3,7 +3,7 @@ import conf from "../conf/conf";
 import {Account,ID,Client,Databases,Storage,Query} from 'appwrite'
 
 // read this documnentation --> https://appwrite.io/docs/references/cloud/client-web/databases
-export class Service{
+export class sellerService{
     client = new Client();
     databases;
     bucket;
@@ -17,75 +17,44 @@ export class Service{
         this.bucket = new Storage(this.client)
     }
 
-    // method to get all the products in database collection - products to show them on screen
-    async getProducts({limit,onpage}) {
-        console.log(limit,onpage)
+    // method to get all the products in database collection(products) that are added by the current seller
+    async getProducts(sellerid) {
         try {
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseID, // param1 - database id
                 conf.appwriteproductsId, // param2 - collection id - products
-                // following queries are for pagination
+                // Query to get all documents having sellerid equals to current sellerid
                 [
-                    Query.limit(limit),
-                    Query.offset(limit*(onpage-1))
+                    Query.equal('sellerid',sellerid)
                 ]
                 )
         } catch (error) {
-            console.log(`Apprite service :: getProducts ${error}`)
+            console.log(`Apprite sellerservice :: getProducts ${error}`)
             return [] // return an empty array 
         }
     }
 
-    async getSingleProduct(productid) {
+    // method to add new product in collection (products)
+    // we will require all the product details in an object
+    async addNewProduct({name, price, description, stock, category, image, sellerid, seller}) {
         try{
-            return await this.databases.getDocument(
-                conf.appwriteDatabaseID,
-                conf.appwriteproductsId,        
-                productid
-            )
-        } catch(error){
-            console.log("Error : getSingleProduct ",error)
-        }
-    }
-
-    // method to add and item to cart when user clicks 'ADD TO CART'
-    // we will require the authenticated userid, productid, quantity
-    async addItemToCart({userid, productid, qty}) {
-        try{
-            // check if the document already exists // match using userid and productid
-            const document = await this.databases.listDocuments(
-                conf.appwriteDatabaseID,
-                conf.appwritecartsId,
-                [Query.equal("user_id",userid), Query.equal("productid",productid)]
-            )
-            // if the document already exists , then just update that document using updatedocument method
-            if(document.total !== 0){
-                // get the previous quantity in that document
-                const qty = document.documents[0].quantity
-                // update document with quantity++
-                return await this.databases.updateDocument(
-                    conf.appwriteDatabaseID,
-                    conf.appwritecartsId,
-                    document.documents[0].$id,
-                    {
-                        quantity: qty+1
-                    },
-                )
-                // Note: if the document is updated we will get the updated document as response from addItemToCart function
-            } else{
-                // else create new document
+                //create new document in products collection using createDocument() method
                 return await this.databases.createDocument(
                     conf.appwriteDatabaseID, // param1 - database id
-                    conf.appwritecartsId, // param2 - collection id - carts
+                    conf.appwriteproductsId, // param2 - collection id - carts
                     ID.unique(), // unique id for every document
                     { // json data 
-                        user_id: userid,
-                        productid: productid,
-                        quantity: qty,
-                        added_at: new Date().toISOString(),
+                        name: name, // name of the product (string)
+                        price: price, // price of the product (string)
+                        description: description, // description of the product (string)
+                        stock: stock, // product stock (integer)
+                        category: category, // product category (string)
+                        image: image, // file id's of all 4 images in an array (string array/list)
+                        sellerid: sellerid, // id of seller who's adding the product (string)
+                        seller: seller, // name of the seller who's adding the product (string)
+                        created_at: new Date().toISOString(), // time at which the product is being added (DateTime)
                     }   
                 )
-            }
 
         } catch(error) {
             console.log(`Apprite service :: addItemToCart ${error}`)
@@ -189,6 +158,6 @@ export class Service{
 
 // Service ka object banado and use export karo so that hame ek object milega and usepe ham . method se 
 // konse bhi functions access kar sakte hai
-const service = new Service();
-export default service
+const sellerservice = new sellerService();
+export default sellerservice
 

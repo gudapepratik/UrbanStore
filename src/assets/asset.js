@@ -1,4 +1,14 @@
 import dashboardimg1 from './New Arrival.png'
 import footerimg from './Untitled design (5).png'
 import loginimg from './UrbanStore.svg'
-export {dashboardimg1, footerimg, loginimg};
+import emptycartimg from './empty-cart.png'
+import emptybagimg from './UrbanStore (2).png'
+import shopusbox from './box.png'
+import shopusguarantee from './guarantee.png'
+import shopusvan from './van.png'
+import HomeCardimg1 from './HomeCardimg1.png'
+import HomeCardimg2 from './1.png'
+import HomeCardimg3 from './2.png'
+import HomeCardimg4 from './3.png'
+import HomeCardimg5 from './4.png'
+export {dashboardimg1,shopusbox,shopusguarantee,shopusvan, footerimg, loginimg, emptybagimg, emptycartimg, HomeCardimg1,HomeCardimg2,HomeCardimg3,HomeCardimg4,HomeCardimg5};

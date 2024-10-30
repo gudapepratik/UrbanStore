@@ -4,6 +4,7 @@ import { RiCloseLine } from "@remixicon/react";
 import service from "../../appwrite/config";
 import { useDispatch } from "react-redux";
 import { removeFromCart } from "../../store/cartSlice";
+import { useNavigate } from "react-router";
 
 function CartItem({
   product
@@ -12,6 +13,7 @@ function CartItem({
   const [splittedname,setSplittedName] = useState([])
   const [isitemdeleted,setIsItemDeleted] = useState(false)
   const dispatch = useDispatch()
+  const navigate = useNavigate();
 
   const transformname = (name) => {
     const splitted = name.split('|')
@@ -21,7 +23,7 @@ function CartItem({
       if(currentproduct) {
         transformname(currentproduct.name)
       }
-  },[])
+  },[product])
 
   const handleDeleteitem = async () => {
     if(currentproduct){
@@ -33,16 +35,27 @@ function CartItem({
         }
     }
   }
+
+  const goto = () => {
+      const slug = `/products/${product.productid}`;
+      setTimeout(() => {
+          navigate(slug)
+      },500)
+  }
+
   return (
     <>
-      <div className="w-full flex border-[1px] border-zinc-400 shadow-sm p-3 items-center gap-3   ">
+      <div
+      className="w-full flex border-[1px] border-zinc-400 shadow-sm p-3 items-center gap-3 cursor-pointer hover:bg-zinc-100">
         <div className="w-36 bg-red-600 h-full overflow-hidden">
           <img src={product.imgurl} alt="" className=" scale-125 translate-y-4" img/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "/>
         </div> 
         <div className="w-full flex flex-col gap-3">
           {/* brand and title  */}
           <div className="flex flex-col justify-between items-start">
-            <h2 className="font-DMSans text-zinc-900 font-bold text-2xl">{splittedname?.at(0)}</h2>
+            <h2 
+            onClick={goto}
+            className="font-DMSans text-zinc-900 font-bold text-2xl hover:underline-offset-2 hover:underline transition-all no-underline">{splittedname?.at(0)}</h2>
             <h3 className="font-DMSans text-zinc-600 text-base ">
             {splittedname?.at(1)}
             </h3>
@@ -79,7 +92,7 @@ function CartItem({
 
           {/* remove button  */}
           <div>
-            <button>
+            <button className="hover:bg-zinc-200">
               <RiCloseLine onClick={handleDeleteitem}/>
             </button>
           </div>
