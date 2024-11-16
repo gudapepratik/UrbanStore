@@ -7,6 +7,8 @@ const conf = {
     appwriteordersId: String(import.meta.env.VITE_APP_ORDERS_COLLECTION_ID),
     appwriteproductsId: String(import.meta.env.VITE_APP_PRODUCTS_COLLECTION_ID),
     appwriteproductimageBucketId: String(import.meta.env.VITE_APP_PRODUCT_IMAGE_BUCKET_ID),
+    appwritesellerTeamId:  String(import.meta.env.VITE_APP_APPWRITE_SELLER_TEAM_ID),
+    appwritesellerTeamManagerApiKey:  String(import.meta.env.VITE_APP_APPWRITE_SELLER_TEAM_MANAGER_API_KEY),
 }
 
 export default conf

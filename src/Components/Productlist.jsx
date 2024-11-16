@@ -20,6 +20,142 @@ function Productlist() {
 
   const [onpage, setOnPage] = useState(1);
 
+  // product category
+  // product categories
+  const productCategories = [
+    { 
+      category: 'Apparel & Accessories', 
+      subCategories: [
+        'All products',
+        'Men’s Clothing', 
+        'Women’s Clothing', 
+        'Kids\' Clothing', 
+        'Footwear', 
+        'Bags & Luggage', 
+        'Jewelry & Accessories'
+      ] 
+    },
+    { 
+      category: 'Electronics', 
+      subCategories: [
+        'Mobile Phones & Tablets', 
+        'Computers & Laptops', 
+        'Cameras & Photography', 
+        'Audio & Headphones', 
+        'Wearable Tech', 
+        'Home Appliances'
+      ] 
+    },
+    { 
+      category: 'Home & Living', 
+      subCategories: [
+        'Furniture', 
+        'Kitchenware', 
+        'Bedding & Mattresses', 
+        'Home Decor', 
+        'Storage & Organization', 
+        'Lighting'
+      ] 
+    },
+    { 
+      category: 'Beauty & Personal Care', 
+      subCategories: [
+        'Skincare', 
+        'Makeup', 
+        'Hair Care', 
+        'Fragrances', 
+        'Health Supplements', 
+        'Personal Hygiene'
+      ] 
+    },
+    { 
+      category: 'Sports & Outdoors', 
+      subCategories: [
+        'Sports Equipment', 
+        'Outdoor Gear', 
+        'Camping & Hiking', 
+        'Exercise & Fitness', 
+        'Sportswear'
+      ] 
+    },
+    { 
+      category: 'Books & Stationery', 
+      subCategories: [
+        'Fiction & Non-fiction Books', 
+        'Educational & Reference Books', 
+        'Magazines & Comics', 
+        'Office Supplies', 
+        'Art & Craft Supplies'
+      ] 
+    },
+    { 
+      category: 'Toys & Baby Products', 
+      subCategories: [
+        'Toys & Games', 
+        'Baby Clothing', 
+        'Strollers & Car Seats', 
+        'Diapers & Baby Care'
+      ] 
+    },
+    { 
+      category: 'Food & Beverages', 
+      subCategories: [
+        'Snacks & Packaged Foods', 
+        'Beverages', 
+        'Condiments & Spices', 
+        'Fresh Produce', 
+        'Organic & Health Foods'
+      ] 
+    },
+    { 
+      category: 'Health & Wellness', 
+      subCategories: [
+        'Supplements & Vitamins', 
+        'Fitness Equipment', 
+        'Wellness Gadgets', 
+        'First Aid & Medical Supplies'
+      ] 
+    },
+    { 
+      category: 'Automotive', 
+      subCategories: [
+        'Car Accessories', 
+        'Bike Accessories', 
+        'Car Care Products', 
+        'Replacement Parts'
+      ] 
+    },
+    { 
+      category: 'Pet Supplies', 
+      subCategories: [
+        'Pet Food', 
+        'Pet Accessories', 
+        'Pet Grooming', 
+        'Pet Toys'
+      ] 
+    },
+    { 
+      category: 'Grocery Essentials', 
+      subCategories: [
+        'Household Cleaning Supplies', 
+        'Paper Products', 
+        'Laundry Supplies'
+      ] 
+    },
+    { 
+      category: 'Garden & Outdoor Living', 
+      subCategories: [
+        'Garden Tools', 
+        'Plants & Seeds', 
+        'Outdoor Furniture', 
+        'Barbecue & Grill Supplies'
+      ] 
+    }
+  ]
+
+  // filter category
+  const [filterCategory,setFilterCategory] = useState('')
+
   // image urls
   const [imageUrls, setImageUrls] = useState([]);
 
@@ -36,10 +172,12 @@ function Productlist() {
     const fetchProducts = async () => {
       try {
         dispatch(setLoading(true));
+        const category = filterCategory
         console.log("running", onpage);
         const response = await service.getProducts({
           limit: 8,
           onpage: onpage,
+          category
         });
         dispatch(setProducts(response.documents));
 
@@ -62,7 +200,7 @@ function Productlist() {
     };
 
     fetchProducts();
-  }, [dispatch, onpage,searchKey]);
+  }, [dispatch, onpage,searchKey,filterCategory]);
 
   const getImageUrl = (id) => {
     const image = imageUrls.find((img) => img.id === id); // Use find instead of filter
@@ -92,37 +230,57 @@ function Productlist() {
           </div>
         ) : (
           <>
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-10 gap-6">
-  {/* Display the product list */}
-  {products && products.length > 0 ? (
-    products.map((product) => (
-      <Product
-        key={product.$id}
-        id={product.$id}
-        title={product.name}
-        price={product.price}
-        imageurl={getImageUrl(product.$id)}
-      />
-    ))
-  ) : (
-    /* Display the empty state when no products are available */
-    <div className="w-full col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4 flex items-center justify-center py-16">
-      <div className="flex flex-col items-center justify-center max-w-md text-center">
-        <img
-          src={emptybagimg}
-          alt="empty bag"
-          className="w-32 h-32 mb-4"
-        />
-        <h1 className="font-DMSans font-bold text-xl text-zinc-800 selection:bg-rose-500 selection:text-white">
-          No more items to show
-        </h1>
-        <h2 className="font-DMSans font-normal text-zinc-400 mt-2 selection:bg-rose-500 selection:text-white">
-          Looks like you've explored all the products. Time to grab your favorites!
-        </h2>
-      </div>
-    </div>
-  )}
-</div>
+            <div className="flex flex-col w-full">
+              <div className="w-full h-14 flex items-center border-[1px] justify-between border-zinc-400 rounded-md p-2 shadow-inner">
+                <div>
+                  <label htmlFor="category">Sort by category: </label>
+                  <select 
+                  name="category" 
+                  id="category" 
+                  className="px-2 py-1 rounded-md border-[1px] border-zinc-400"
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  >
+                    {productCategories.map((cats) => (
+                        cats.subCategories.map((subs,key) => (
+                          <option key={key} value={subs}>{subs}</option>
+                        ))
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-10 gap-6">
+                {/* Display the product list */}
+                {products && products.length > 0 ? (
+                  products.map((product) => (
+                    <Product
+                      key={product.$id}
+                      id={product.$id}
+                      title={product.name}
+                      price={product.price}
+                      imageurl={getImageUrl(product.$id)}
+                    />
+                  ))
+                ) : (
+                  /* Display the empty state when no products are available */
+                  <div className="w-full col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4 flex items-center justify-center py-16">
+                    <div className="flex flex-col items-center justify-center max-w-md text-center">
+                      <img
+                        src={emptybagimg}
+                        alt="empty bag"
+                        className="w-32 h-32 mb-4"
+                      />
+                      <h1 className="font-DMSans font-bold text-xl text-zinc-800 selection:bg-rose-500 selection:text-white">
+                        No more items to show
+                      </h1>
+                      <h2 className="font-DMSans font-normal text-zinc-400 mt-2 selection:bg-rose-500 selection:text-white">
+                        Looks like you've explored all the products. Time to grab your favorites!
+                      </h2>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
 
             <div className="flex w-full items-center justify-around my-12 font-DMSans font-normal text-xl">

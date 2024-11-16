@@ -7,6 +7,9 @@ import { login, logout } from "../store/authSlice";
 import { Navigate, useNavigate } from "react-router";
 import { loginimg } from "../assets/asset";
 import Loader from "./Loader/Loader";
+import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
+import 'react-notifications-component/dist/theme.css' // react notification css theme
+import 'animate.css/animate.min.css' // react notification animation class
 
 function Login() {
 
@@ -20,12 +23,22 @@ function Login() {
   // loading state
   const [isloading, setIsLoading] = useState(false)
 
+  // dummy notification
+  const notification = {
+    title: "Add title message",
+    message: "Configurable",
+    type: "success",
+    insert: "top",
+    container: "top-right",
+    animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+    animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+  };
+
   const {
     handleSubmit,
     formState: { errors },
     register,
   } = useForm();
-  let user = useSelector(state => state.authSlice.useData)
 
   const Onsubmit = async (data) => {
     console.log(data);
@@ -36,27 +49,50 @@ function Login() {
         var user = await authService.createAccount(data);
       } else{
         // console.log("sahi hai")
-        user = await authService.login(data);
+        user = await authService.login(data,"Customer");
       }
       //console.log(userData);
       if (user) {
-        console.log("yaha aaja")
         // now once the user is logged in call the get method to get the user data and then store it to redux userdata state
         const userData = await authService.getCurrentUser();
         if(userData){
-          dispatch(login(userData));
+          dispatch(login([userData,"Customer"]))
+          // as updates happen asyncronously in redux , we cannt immedietly access the userData from authSlice in redux store
+          // we can only access once the component re-renders
         }
         // console.log(user)
         navigate('/')
         setIsLoading(false)
       } else{
         if(!isnoaccount) {
-          setisPassWrong(true);
+          setisPassWrong(true)
           setIsLoading(false)
+          Store.addNotification({
+            ...notification,
+            type: "danger",
+            title: "Login Failed",
+            message: "Wrong password entered. Ensure your credentials are correct.",
+            container: 'top-right',
+            dismiss: {
+              duration: 2000,
+              pauseOnHover: true
+            }
+          })
         }
       }
     } catch (error) {
-      console.log(error);
+      setIsLoading(false)
+      Store.addNotification({
+        ...notification,
+        type: "danger",
+        title: "Unknown Error Occurred",
+        message: `${error.message}`,
+        container: 'top-right',
+        dismiss: {
+          duration: 2000,
+          pauseOnHover: true
+        }
+      })
     }
   };
 
@@ -64,7 +100,12 @@ function Login() {
   return (
     <>
       <div className=" w-full max-h-screen flex">
+        {/* loading  */}
         {isloading && <Loader/>}
+
+        {/* notifications component  */}
+        <ReactNotifications/>
+        
         <div className="w-9/12 hidden md:block overflow-hidden">
             <img src={loginimg} alt="" className="-translate-y-28"/>
         </div>

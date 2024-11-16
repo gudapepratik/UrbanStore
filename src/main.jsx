@@ -20,6 +20,10 @@ import Productlist from "./Components/Productlist.jsx";
 import ProductPage from "./Components/ProductInfo/ProductPage.jsx";
 import { CreateAcc } from "./Components/index.js";
 import Cart from "./Components/Cart/Cart.jsx";
+import SellerLogin from "./Components/SellerComponents/SellerLogin/SellerLogin.jsx";
+import SellerDashboard from "./Components/SellerComponents/Dashboard/SellerDashboard.jsx";
+import Productscomp from "./Components/SellerComponents/Products/Productscomp.jsx";
+import AddProduct from "./Components/SellerComponents/Products/AddProduct.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,22 +34,14 @@ const router = createBrowserRouter(
       <Route path="products" element={<Productlist />} />
       <Route path="products/:id" element={<ProductPage />} />
       <Route path="cart" element = {<Cart/>} />
+      <Route path="sellerdashboard/" element =  {<SellerDashboard/>} > 
+        <Route path="login" element =  {<SellerLogin/>} />
+        <Route path="products" element =  {<Productscomp/>} />
+      </Route>
     </Route>
+    
   )
 );
-
-// const router = createBrowserRouter([
-//   {
-//     path: '/',
-//     element: <Layout/>,
-//     children: [
-//         {
-//           path: '',
-//           element: <Home/>
-//         },
-//     ]
-//   },
-// ])
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

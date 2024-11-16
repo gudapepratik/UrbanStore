@@ -5,12 +5,12 @@ import { Outlet ,useLocation} from "react-router";
 function Layout({children}) {
   const location = useLocation();
 
-  const hideNavbar = location.pathname;
+  const currentLocation = location.pathname;
 
   return (
     <>
       {
-        hideNavbar !== '/login' && <Navbar />
+        currentLocation !== '/login' && !currentLocation.startsWith('/sellerdashboard') && <Navbar />
       }
       
       <Outlet/>

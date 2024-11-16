@@ -18,19 +18,48 @@ export class sellerService{
     }
 
     // method to get all the products in database collection(products) that are added by the current seller
-    async getProducts(sellerid) {
+    // also can filter if category is specified
+    async getProducts(sellerid,category) {
         try {
+            if(!category && category === '') {
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID, // param1 - database id
+                    conf.appwriteproductsId, // param2 - collection id - products
+                    // Query to get all documents having sellerid equals to current sellerid (i.e. all products added by the seller)
+                    [
+                        Query.equal('sellerid',sellerid)
+                    ]
+                    )
+            }
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseID, // param1 - database id
                 conf.appwriteproductsId, // param2 - collection id - products
-                // Query to get all documents having sellerid equals to current sellerid
+                // Query to get all documents having sellerid equals to current sellerid (i.e. all products added by the seller)
                 [
-                    Query.equal('sellerid',sellerid)
+                    Query.equal('sellerid',sellerid),
+                    Query.equal('category',category)
                 ]
                 )
         } catch (error) {
-            console.log(`Apprite sellerservice :: getProducts ${error}`)
-            return [] // return an empty array 
+            throw new Error(error);
+        }
+    }
+
+    // method to upload images to appwrite storage (to be done before adding the new product to database cause we need to have unique file id's
+    // of all 4 images)
+    // parameter - we need to give file as a parameter which we get from input:file html tag
+    // return - is successfull - file (with file id) else - throws error
+    // reference - https://appwrite.io/docs/references/cloud/client-web/storage
+    async addNewImage(file) {
+        try {
+            return await this.bucket.createFile(
+                conf.appwriteproductimageBucketId,
+                ID.unique(),
+                file,
+            )
+        } catch(error){
+            throw new Error(error);
+            
         }
     }
 
@@ -41,13 +70,13 @@ export class sellerService{
                 //create new document in products collection using createDocument() method
                 return await this.databases.createDocument(
                     conf.appwriteDatabaseID, // param1 - database id
-                    conf.appwriteproductsId, // param2 - collection id - carts
+                    conf.appwriteproductsId, // param2 - collection id (products)
                     ID.unique(), // unique id for every document
                     { // json data 
                         name: name, // name of the product (string)
-                        price: price, // price of the product (string)
+                        price: Number(price), // price of the product (string)
                         description: description, // description of the product (string)
-                        stock: stock, // product stock (integer)
+                        stock: Number(stock), // product stock (integer)
                         category: category, // product category (string)
                         image: image, // file id's of all 4 images in an array (string array/list)
                         sellerid: sellerid, // id of seller who's adding the product (string)
@@ -57,76 +86,31 @@ export class sellerService{
                 )
 
         } catch(error) {
-            console.log(`Apprite service :: addItemToCart ${error}`)
+            throw new Error(error);
+            
         }
     }
 
-    // method to delete a post (databases,deleteDocument)
-    async deleteCartItem(documentid) {
+    // method to remove a product from "products" collection
+    // for this we require the unique id of the product document (product.$id)
+    async deleteProduct(documentid) {
         try {
 
             // no need to return the response
         await this.databases.deleteDocument(
                 conf.appwriteDatabaseID, // param1 - database id
-                conf.appwritecartsId, // param2 - collection id
+                conf.appwriteproductsId, // param2 - collection id (products)
                 documentid, // param3 - id of document to be deleted
             )
 
             // just return true indicating that the post is deleted
             return true;
         } catch(error) {
-            console.log(`Apprite service :: deleteCartItem ${error}`)
+            console.log(`Apprite sellerservice :: deleteProduct ${error}`)
+            // else return false if an error is occurred while deleting the product
             return false;
         }
     }
-
-    // method to get a post (databases.getDocument())
-    // we are not using getDocument because for that we will require the documnet id 
-    // of the item to get , but when the user clicks the Cart button , we only have it's unique 
-    // userid from which we can get all the items in cart for that user. therefore to get all the documents/items
-    // from the collection carts, we will use listDocuments() where we can add a query, that only give the item whose
-    // userid matched with the id of the current user.
-    async getCartItems(userid) {
-        try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseID, // param1 - database id
-                conf.appwritecartsId, // param2 - collection id
-                [Query.equal("user_id",userid)], // param3 - queries array --> userid match with current user's id
-            )
-        } catch(error) {
-            console.log(`Apprite service :: getCartItems ${error}`)
-            return false;
-        }
-    }
-
-    // userid - id of the user placing the order
-    // cartItems - array of objects containing items in cart as objects 
-    async placeOrder(userid, cartItems){
-        try {
-        const productids = cartItems.map(item => item.product_id) // array containing all the product id of the products in cart
-        const totalAmount = cartItems.reduce((total,item) => total + item.price*item.quantity,0)
-
-        await this.databases.createDocument(
-            conf.appwriteDatabaseID, // param1 -- database id
-            conf.appwriteordersId, // param2 -- collection id -- orders
-            ID.unique(),
-            {
-                user_id: userid,
-                product_ids: productids,
-                total_amount: totalAmount,
-                status: "pending",
-                created_at: new Date().toISOString(),
-            }
-
-        )
-        console.log("Order placed Successfully")
-        return true 
-        } catch(error){
-            console.log(`Error: placeOrder ${error}`)
-            return false
-        }
-
-    } 
 
     async getImageUrl(fileid){
         try {
@@ -136,23 +120,11 @@ export class sellerService{
             )
 
         } catch(error){
-            console.log(`Error : getImageUrl ${error}`)
+            throw new Error(error);
+            
         }
     }
-
-
-    // search products
-    async searchProductsbyname(key) {
-        try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseID,
-                conf.appwriteproductsId,
-                [Query.contains('description',key), Query.contains('name',key),Query.contains('category',key)]
-            )
-        } catch(error){
-            console.log(error)
-        }
-    }
+    
 }
 
 

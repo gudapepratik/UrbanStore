@@ -17,6 +17,10 @@ import { logout } from "../store/authSlice";
 import Loader from "./Loader/Loader";
 import { clearCart } from "../store/cartSlice";
 import Searchbar from "./SearchBar/Searchbar";
+import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
+import 'react-notifications-component/dist/theme.css' // react notification css theme
+import 'animate.css/animate.min.css' // react notification animation class
+
 
 function Navbar() {
   const userdata = useSelector((state) => state.authSlice.userData);
@@ -28,6 +32,17 @@ function Navbar() {
   const [showMenu, setShowMenu] = useState(false);
   const [isloading, setIsLoading] = useState(false);
 
+  // Notification dummy
+  const notification = {
+    title: "Add title message",
+    message: "Configurable",
+    type: "success",
+    insert: "top",
+    container: "top-right",
+    animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+    animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+  };
+
   const handleLogout = async () => {
     try {
       if (userdata) {
@@ -37,15 +52,42 @@ function Navbar() {
           dispatch(clearCart());
         });
         setIsLoading(false);
+        Store.addNotification({
+          ...notification,
+          type: "info",
+          title: "Logged Out Successfully",
+          message: "You've successfully logged out of your account",
+          container: 'top-right',
+          dismiss: {
+            duration: 2000,
+            pauseOnHover: true
+          }
+      })
       }
     } catch (error) {
       console.log(error);
+      Store.addNotification({
+        ...notification,
+        type: "danger",
+        title: "Unknown Error Occurred",
+        message: `${error.message}`,
+        container: 'top-right',
+        dismiss: {
+          duration: 2000,
+          pauseOnHover: true
+        }
+    })
     }
   };
 
   return (
     <div className="flex w-full sticky top-0 bg-white z-40 min-h-24 items-center px-4 md:px-8 lg:px-16 justify-between">
+
+      {/* Loader  */}
       {isloading && <Loader />}
+
+      {/* Notification component  */}
+      <ReactNotifications/>
 
       {/* Logo */}
       <div className="rounded-md px-2">
@@ -108,7 +150,23 @@ function Navbar() {
               Login
             </NavLink>
           </li>
+
         )}
+
+        {!userStatus && 
+          <li>
+              <NavLink
+                to="/sellerdashboard/login"
+                className={({ isActive }) =>
+                  `font-bold  ${
+                    isActive ? "text-red-400" : "text-white"
+                  } bg-rose-500 px-2 py-1 rounded-lg `
+                }
+              >
+                Login as Seller
+              </NavLink>
+          </li>
+        }
         <li>
           <NavLink to="/cart" className="p-2">
             <RiShoppingCart2Line size={21} />

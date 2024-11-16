@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import service from "../../appwrite/config";
 import { useLocation } from "react-router";
 import { addToCart, clearCart, setIsNewItemAdded } from "../../store/cartSlice";
+import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
+import 'react-notifications-component/dist/theme.css' // react notification css theme
+import 'animate.css/animate.min.css' // react notification animation class
 
 function Cart() {
   const dispatch = useDispatch();

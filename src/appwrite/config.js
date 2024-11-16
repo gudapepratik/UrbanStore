@@ -18,18 +18,32 @@ export class Service{
     }
 
     // method to get all the products in database collection - products to show them on screen
-    async getProducts({limit,onpage}) {
+    async getProducts({limit,onpage,category}) {
         console.log(limit,onpage)
         try {
-            return await this.databases.listDocuments(
-                conf.appwriteDatabaseID, // param1 - database id
-                conf.appwriteproductsId, // param2 - collection id - products
-                // following queries are for pagination
-                [
-                    Query.limit(limit),
-                    Query.offset(limit*(onpage-1))
-                ]
-                )
+            if(category && category !== 'All products'){
+                console.log(category)
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID, // param1 - database id
+                    conf.appwriteproductsId, // param2 - collection id - products
+                    // following queries are for pagination
+                    [
+                        Query.equal('category',category),
+                        Query.limit(limit),
+                        Query.offset(limit*(onpage-1)),
+                    ]
+                    )
+            } else{
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID, // param1 - database id
+                    conf.appwriteproductsId, // param2 - collection id - products
+                    // following queries are for pagination
+                    [
+                        Query.limit(limit),
+                        Query.offset(limit*(onpage-1))
+                    ]
+                    )
+            }
         } catch (error) {
             console.log(`Apprite service :: getProducts ${error}`)
             return [] // return an empty array 

@@ -2,11 +2,17 @@ import React, { useEffect, useState } from 'react'
 
 function Notificationbox({type = "",message = ""}) {
     const [isslidein,SetIsSlideIn] = useState(false)
+
     useEffect(() => {
-        // setTimeout(() => {
-        //     SetIsSlideIn(prev => !prev)
-        // }, 1000) 
+      
+        initNotify()  
     },[])
+
+    const initNotify = () => {
+      setTimeout(() => {
+        SetIsSlideIn(prev => !prev)
+      }, 1000);
+    }
    
   return ( 
     <div className='w-full h-full overflow-hidden absolute'>

@@ -9,6 +9,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
+import 'react-notifications-component/dist/theme.css' // react notification css theme
+import 'animate.css/animate.min.css' // react notification animation class
 
 function ProductPage() {
   const { id } = useParams(); // unique product id
@@ -17,6 +20,17 @@ function ProductPage() {
   const userid = useSelector((state) => state.authSlice.userData?.$id); // userid of logged in user
   // user status
   const userstatus = useSelector((state) => state.authSlice.status);
+
+  // dummy notification
+  const notification = {
+    title: "Add title message",
+    message: "Configurable",
+    type: "success",
+    insert: "top",
+    container: "top-right",
+    animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+    animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+  };
 
   const [product, setProduct] = useState({});
   const [imageUrls, setImageUrls] = useState([]);
@@ -82,11 +96,29 @@ function ProductPage() {
         // so check this condition and update the store accordingly
         if (data) {
           if (data.quantity > 1) {
-            console.log("already exists");
-            alert("item already present | quantity increamented successfully");
+            Store.addNotification({
+              ...notification,
+              type: "info",
+              title: "Item Quantity Updated",
+              message: "This item is already in your cart. Quantity has been updated.",
+              container: 'top-right',
+              dismiss: {
+                duration: 2000,
+                pauseOnHover: true
+              }
+            })
           } else {
-            console.log("new item");
-            alert("New item added successfully");
+            Store.addNotification({
+              ...notification,
+              type: "success",
+              title: "Item Added to Cart",
+              message: "The selected item has been added to your cart. Continue shopping or view your cart for details.",
+              container: 'top-right',
+              dismiss: {
+                duration: 2000,
+                pauseOnHover: true
+              }
+            })
           }
           // dispatch(setIsNewItemAdded())
         }
@@ -108,6 +140,9 @@ function ProductPage() {
       <h1>Product quantity: {product.stock}</h1> */}
 
 <div className="w-full flex flex-col md:flex-row lg:flex-row mb-40">
+        {/* NOtification Component  */}
+        <ReactNotifications/>
+
         {/* For mobile: Swiper for carousel Using Swiper library for easy integration of image sliding functionality for mobile phone*/}
         <div className="md:hidden lg:hidden w-full snap-x scrollbar-hide overflow-scroll">
           <Swiper
@@ -225,7 +260,7 @@ function ProductPage() {
                 <h1 className="font-DMSans font-light text-lg text-zinc-400">
                   Product Description
                 </h1>
-                <h3 className="font-DMSans font-light text-md text-zinc-800">
+                <h3 className="font-DMSans whitespace-pre-wrap font-light text-md text-zinc-800">
                   {product.description}
                 </h3>
               </div>
