@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
+import { useEffect } from 'react'
 
 const initialState = {
     status: false,
@@ -30,3 +31,5 @@ export const {login,logout} = authSlice.actions
 
 // to import in store
 export default authSlice.reducer
+
+

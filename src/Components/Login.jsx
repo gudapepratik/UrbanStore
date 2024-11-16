@@ -62,11 +62,9 @@ function Login() {
         }
         // console.log(user)
         navigate('/')
-        setIsLoading(false)
       } else{
         if(!isnoaccount) {
           setisPassWrong(true)
-          setIsLoading(false)
           Store.addNotification({
             ...notification,
             type: "danger",
@@ -81,7 +79,6 @@ function Login() {
         }
       }
     } catch (error) {
-      setIsLoading(false)
       Store.addNotification({
         ...notification,
         type: "danger",
@@ -93,6 +90,8 @@ function Login() {
           pauseOnHover: true
         }
       })
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -100,13 +99,13 @@ function Login() {
   return (
     <>
       <div className=" w-full max-h-screen flex">
-        {/* loading  */}
-        {isloading && <Loader/>}
+      {/* loading  */}
+      {isloading && <Loader/>}
 
         {/* notifications component  */}
         <ReactNotifications/>
         
-        <div className="w-9/12 hidden md:block overflow-hidden">
+        <div className="w-9/12 hidden md:block -z-10 overflow-hidden">
             <img src={loginimg} alt="" className="-translate-y-28"/>
         </div>
 

@@ -8,6 +8,7 @@ import Loader from '../../Loader/Loader'
 import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
 import 'react-notifications-component/dist/theme.css' // react notification css theme
 import 'animate.css/animate.min.css' // react notification animation class
+import { NavLink } from 'react-router-dom'
 
 
 // color - #00B75F
@@ -92,13 +93,25 @@ function SellerNav() {
 
             <div className='flex gap-2 items-center justify-center'> 
                 {/* seller account details  */}
-                <div className='flex items-center gap-5 px-5 py-2 text-white bg-[#00B75F] shadow-inner rounded-md'>
-                    <RiUserLine/>
-                    <div className='flex flex-col '>
-                        <h3 className='font-DMSans font-bold'>{userData? userData.name: "Login"}</h3>
-                        <h4 className='font-DMSans text-xs'>seller account</h4>
+                {/* if user is logged out, make it as a Navlink */}
+                {loginstatus ? 
+                    <div className='flex items-center gap-5 px-5 py-2 text-white bg-[#00B75F] shadow-inner rounded-md'>
+                        <RiUserLine/>
+                        <div className='flex flex-col '>
+                            <h3 className='font-DMSans font-bold'>{userData? userData.name: "Login"}</h3>
+                            <h4 className='font-DMSans text-xs'>seller account</h4>
+                        </div>
                     </div>
-                </div>
+                
+                :
+                    <NavLink to={'/sellerdashboard/login'} className='flex items-center gap-5 px-5 py-2 text-white bg-[#00B75F] shadow-inner rounded-md'>
+                        <RiUserLine/>
+                        <div className='flex flex-col '>
+                            <h3 className='font-DMSans font-bold'>{userData? userData.name: "Login"}</h3>
+                            <h4 className='font-DMSans text-xs'>seller account</h4>
+                        </div>
+                    </NavLink>
+                }
 
                 {/* Logout button  */}
                 {loginstatus && 
