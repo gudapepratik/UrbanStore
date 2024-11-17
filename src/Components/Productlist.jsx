@@ -249,39 +249,41 @@ function Productlist() {
                   </select>
                 </div>
               </div>
-              <div className="py-4 grid grid-cols-1 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-10 gap-6">
+              <div className="py-4 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-10 gap-6">
                 {/* Display the product list */}
-                {products && products.length > 0 ? (
-                  products.map((product) => (
-                    <Product
-                      key={product.$id}
-                      id={product.$id}
-                      title={product.name}
-                      price={product.price}
-                      imageurl={getImageUrl(product.$id)}
-                    />
-                  ))
-                ) : (
-                  /* Display the empty state when no products are available */
+                  {products && products.length > 0 && (
+                    products.map((product) => (
+                      <Product
+                        key={product.$id}
+                        id={product.$id}
+                        title={product.name}
+                        price={product.price}
+                        imageurl={getImageUrl(product.$id)}
+                      />
+                    ))
+                  )
+                }
+              </div>
+                      </div>
+              {products && products.length === 0 && <>
+                  {/* Display the empty state when no products are available  */}
                   <div className="w-full col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4 flex items-center justify-center py-16">
                     <div className="flex flex-col items-center justify-center max-w-md text-center">
-                      <img
-                        src={emptybagimg}
-                        alt="empty bag"
-                        className="w-32 h-32 mb-4"
-                      />
-                      <h1 className="font-DMSans font-bold text-xl text-zinc-800 selection:bg-rose-500 selection:text-white">
-                        No more items to show
-                      </h1>
-                      <h2 className="font-DMSans font-normal text-zinc-400 mt-2 selection:bg-rose-500 selection:text-white">
-                        Looks like you've explored all the products. Time to grab your favorites!
-                      </h2>
+                        <img
+                          src={emptybagimg}
+                          alt="empty bag"
+                          className="w-32 h-32 mb-4"
+                        />
+                        <h1 className="font-DMSans font-bold text-xl text-zinc-800 selection:bg-rose-500 selection:text-white">
+                          No more items to show
+                        </h1>
+                        <h2 className="font-DMSans font-normal text-zinc-400 mt-2 selection:bg-rose-500 selection:text-white">
+                          Looks like you've explored all the products. Time to grab your favorites!
+                        </h2>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-
+                </>
+        }
 
             <div className="flex w-full items-center justify-around my-12 font-DMSans font-normal text-xl">
               <button
