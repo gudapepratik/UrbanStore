@@ -58,15 +58,15 @@ function Home() {
                 <div className='w-full md:justify-center md:h-svh flex'>
                   {/* left part */}
                   <div className='w-3/5 h-96 md:h-full flex flex-col gap-3 p-4 pr-1.5'>
-                    <div className='w-full h-1/2 bg-green-400 overflow-hidden'>
+                    <div className='w-full h-1/2  overflow-hidden'>
                       <img src={HomeCardimg1} alt=""  className='  scale-125 translate-y-4 -translate-x-5 md:-translate-x-0  md:hover:scale-110 md:-translate-y-2 md:scale-105    transition-all duration-300'/>
 
                     </div>
                     <div className='grid grid-cols-2 w-full h-1/2 gap-3'>
-                          <div className='bg-red-200 overflow-hidden'>  
+                          <div className='overflow-hidden'>  
                             <img src={HomeCardimg2} alt="" className='md:object-cover object-contain scale-150 translate-x-5 md:scale-100 md:translate-x-0  h-full md:hover:scale-105 transition-all  duration-300'/>
                           </div>
-                          <div className='bg-orange-700 overflow-hidden'>
+                          <div className=' overflow-hidden'>
                           <img src={HomeCardimg3} alt="" className='object-cover  h-full md:hover:scale-105 transition-all duration-300'/>
                           </div>
                     </div>
@@ -75,11 +75,11 @@ function Home() {
                   {/* right part  */}
                   <div className='w-2/5 h-96 md:h-svh'>
                         <div className='flex flex-col h-full p-4 pl-1.5 gap-3'>
-                          <div className='w-full h-3/5 bg-blue-300 overflow-hidden'>
+                          <div className='w-full h-3/5  overflow-hidden'>
                           <img src={HomeCardimg5} alt="" className='md:hover:scale-110 h-full object-cover  md:scale-105 transition-all duration-300'/>
 
                           </div>
-                          <div className='w-full h-2/5 bg-cyan-300 overflow-hidden'>
+                          <div className='w-full h-2/5  overflow-hidden'>
                             <img src={HomeCardimg4} alt="" className='md:hover:scale-105 md:-translate-y-20 -translate-y-5  transition-all duration-300'/>
                           </div>
 

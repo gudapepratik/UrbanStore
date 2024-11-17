@@ -40,6 +40,12 @@ export default {
         slideIn: 'slideIn 0.3s ease-out forwards',
         slideOut: 'slideOut 0.3s ease-out forwards',
       },
+      maskImage: {
+        'fade-right': 'linear-gradient(90deg, black 30%, transparent)',
+      },
+      WebkitMaskImage: {
+        'fade-right': 'linear-gradient(90deg, black 30%, transparent)',
+      },
       
       
     },
@@ -47,7 +53,19 @@ export default {
   plugins: [
     // import('tailwindcss-animated')
 		// ...
-    require("tailwind-scrollbar-hide")
+    require("tailwind-scrollbar-hide"),
+    function ({ addUtilities }) {
+      addUtilities({
+        '.text-fade': {
+          maxWidth: '100%',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          WebkitMaskImage: 'linear-gradient(90deg, black 70%, transparent)',
+          maskImage: 'linear-gradient(90deg, black 70%, transparent)',
+        },
+      });
+    },
 	],
 }
 

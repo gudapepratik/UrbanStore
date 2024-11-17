@@ -249,7 +249,7 @@ function Productlist() {
                   </select>
                 </div>
               </div>
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-10 gap-6">
+              <div className="py-4 grid grid-cols-1 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-10 gap-6">
                 {/* Display the product list */}
                 {products && products.length > 0 ? (
                   products.map((product) => (
