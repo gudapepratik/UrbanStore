@@ -58,7 +58,7 @@ export class Service{
                 productid
             )
         } catch(error){
-            console.log("Error : getSingleProduct ",error)
+            throw new Error(error)
         }
     }
 

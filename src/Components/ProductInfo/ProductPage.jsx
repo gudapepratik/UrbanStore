@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
-import service from "../../appwrite/config";
+import service, { Service } from "../../appwrite/config";
 import { RiStarFill } from "@remixicon/react";
 import Footer from "../Footer";
 import { setIsNewItemAdded } from "../../store/cartSlice";
@@ -12,14 +12,24 @@ import 'swiper/css/pagination';
 import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
 import 'react-notifications-component/dist/theme.css' // react notification css theme
 import 'animate.css/animate.min.css' // react notification animation class
+import Loader from "../Loader/Loader";
 
 function ProductPage() {
-  const { id } = useParams(); // unique product id
+  const { id } = useParams(); // unique product id which gives unique id of the product to show 
+
+  // use to find the item to show with its unique id in redux productSlice, if its not there then the 
+  // item is retrieved from backend // (reason behind it) could also directly retrived from backend without first searching in the redux store
+  // but if we already have the required data then why to call backend . 
+  // also another reason , "when user clicks on the product card to get to this page, it means that the current product to be shown is already in the redux store
+  // so we just need to find it, so it's is a more optimised way than getting the item from backend"
   const products = useSelector((state) => state.productSlice.products);
   // user id
   const userid = useSelector((state) => state.authSlice.userData?.$id); // userid of logged in user
   // user status
   const userstatus = useSelector((state) => state.authSlice.status);
+
+  // loading state
+  const [isloading,setIsLoading] = useState(false)
 
   // dummy notification
   const notification = {
@@ -32,22 +42,30 @@ function ProductPage() {
     animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
   };
 
+  // to store the details of the current item to show
   const [product, setProduct] = useState({});
+
+  // to store the the urls of all the 4 images to show
   const [imageUrls, setImageUrls] = useState([]);
+
   // which product image to show as a big image i.e image[0] // 0th is initial
   const [imagetoshow, setImageToShow] = useState(0);
+
   // splitted product name array
   const [name, setName] = useState([]);
+
+  // use to dispatch the changes to the redux store
   const dispatch = useDispatch();
 
+  // if user click on "add to cart" then that item will be stored in redux store's cartSlice
   const cartItems = useSelector((state) => state.cartSlice.cartItems);
 
-  // cart item already exists
+  // cart item already exists // 
   const [isitemalreadyexists, setIsItemAlreadyExists] = useState(false);
 
   // scroll to top implementation
   const location = useLocation()
-
+  // by default when the component is rendered it scrolls up to top smoothly
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -57,6 +75,7 @@ function ProductPage() {
 
   const qty = 1;
 
+  // to split the product title into "brand name" and "item title" that are seperated by '|'
   const handleName = (prname) => {
     if (prname) {
       const splitteddata = prname.split("|");
@@ -64,28 +83,73 @@ function ProductPage() {
     }
   };
 
-  useEffect(() => {
-    const currentProduct = products.find((product) => product.$id === id);
+  // function to call the backend to get the item to be shown using it's unique id
+  const fetchProduct = async () => {
+    try {
+      setIsLoading(true)
+      const data = await service.getSingleProduct(id)
 
-    if (currentProduct) {
-      setProduct(currentProduct);
-      fetchImageUrls(currentProduct);
-      handleName(currentProduct.name);
+      // if we got the data then update the states
+      setProduct(data);
+      fetchImageUrls(data);
+      handleName(data.name);
+
+    } catch(error){
+      throw new Error(error);
+    } finally{
+      setIsLoading(false)
+    }
+  }
+
+  // whenever the component is rendered the item to show is first searched in redux's productSlice store
+  // if it is there, then well n good , we don't have to make the backend call to retrive the item information
+  // but if it is not, then we have to make a backend call to get the item to be shown using it's unique id
+  useEffect(() => {
+    try{
+      // find in the redux store first
+      const currentProduct = products.find((product) => product.$id === id);
+      
+      // if found in redux store
+      if (currentProduct) {
+        setProduct(currentProduct);
+        fetchImageUrls(currentProduct);
+        handleName(currentProduct.name);
+      } else{
+        // call a async function that will retrive the item details from backend
+        fetchProduct()
+      }
+    } catch(error){
+      Store.addNotification({
+        ...notification,
+        type: "info",
+        title: "Unknown Error Occurred",
+        message: error.message,
+        container: 'top-right',
+        dismiss: {
+          duration: 2000,
+          pauseOnHover: true
+        }
+      })
     }
   }, [id, products]);
 
   const fetchImageUrls = async (product) => {
-    const urls = await Promise.all(
-      product.image.map(async (imgId) => {
-        const img = await service.getImageUrl(imgId);
-        return img.href;
-      })
-    );
-    setImageUrls(urls); // Update all image URLs at once
+    try {
+      const urls = await Promise.all(
+        product.image.map(async (imgId) => {
+          const img = await service.getImageUrl(imgId);
+          return img.href;
+        })
+      );
+      setImageUrls(urls); // Update all image URLs at once
+    } catch(error){
+      throw new Error("Error fetchImageUrls",error);
+    } 
   };
 
   const handleAddToCart = async () => {
     try {
+      setIsLoading(true)
       if (userstatus) {
         const data = await service.addItemToCart({
           userid,
@@ -123,10 +187,32 @@ function ProductPage() {
           // dispatch(setIsNewItemAdded())
         }
       } else {
-        alert("User Not Logged in");
+        Store.addNotification({
+          ...notification,
+          type: "warning",
+          title: "User not logged in",
+          message: "The current operation could not be completed, consider login first",
+          container: 'top-right',
+          dismiss: {
+            duration: 2000,
+            pauseOnHover: true
+          }
+        })
       }
     } catch (error) {
-      alert(error);
+      Store.addNotification({
+        ...notification,
+        type: "danger",
+        title: "Unknown Error Occurred",
+        message: error.message,
+        container: 'top-right',
+        dismiss: {
+          duration: 2000,
+          pauseOnHover: true
+        }
+      })
+    } finally{
+      setIsLoading(false)
     }
   };
 
@@ -140,6 +226,9 @@ function ProductPage() {
       <h1>Product quantity: {product.stock}</h1> */}
 
 <div className="w-full flex flex-col md:flex-row lg:flex-row mb-40">
+        {/* Loader component  */}
+        {isloading && <Loader/>}
+
         {/* NOtification Component  */}
         <ReactNotifications/>
 

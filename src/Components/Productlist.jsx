@@ -233,11 +233,11 @@ function Productlist() {
             <div className="flex flex-col w-full">
               <div className="w-full h-14 flex items-center border-[1px] justify-between border-zinc-400 rounded-md p-2 shadow-inner">
                 <div>
-                  <label htmlFor="category">Sort by category: </label>
+                  <label htmlFor="category">Sort: </label>
                   <select 
                   name="category" 
                   id="category" 
-                  className="px-2 py-1 rounded-md border-[1px] border-zinc-400"
+                  className="md:px-2 md:py-1 w-28 md:w-fit rounded-md border-[1px] border-zinc-400"
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
                   >
@@ -278,7 +278,7 @@ function Productlist() {
                           No more items to show
                         </h1>
                         <h2 className="font-DMSans font-normal text-zinc-400 mt-2 selection:bg-rose-500 selection:text-white">
-                          Looks like you've explored all the products. Time to grab your favorites!
+                          Looks like you&apos;ve explored all the products. Time to grab your favorites!
                         </h2>
                     </div>
                   </div>
@@ -287,14 +287,14 @@ function Productlist() {
 
             <div className="flex w-full items-center justify-around my-12 font-DMSans font-normal text-xl">
               <button
-                className="px-2 pr-4 rounded-full font-lg hover:text-white py-1 flex items-center border-[1px] border-blue-700 text-blue-900 hover:bg-blue-700 transition-all"
+                className="px-2 pr-4 rounded-full font-lg hover:text-white py-1 flex items-center border-[1px] border-rose-500 text-rose-500 hover:bg-rose-500"
                 onClick={() => handleonpagechange("prev")}
               >
                 <RiArrowDropLeftLine className="m-0" /> Prev
               </button>
-              <p>Page {onpage} of 289</p>
+              <p className="text-sm md:text-base">Page {onpage}</p>
               <button
-                className="px-2 pl-4 rounded-full font-lg hover:text-white py-1 flex items-center border-[1px] border-blue-700 text-blue-900 hover:bg-blue-700"
+                className="px-2 pl-4 rounded-full font-lg hover:text-white py-1 flex items-center border-[1px] border-rose-500 text-rose-500 hover:bg-rose-500"
                 onClick={() => handleonpagechange("next")}
               >
                 Next <RiArrowDropRightLine className="m-0" />

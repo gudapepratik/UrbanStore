@@ -37,8 +37,8 @@ function Product({
   return (
     <>
     
-        <div className='md:w-80 md:h-auto bg-white w-44  hover:shadow-md rounded-xl'>
-            <RiHeart3Fill className='text-transparent stroke-2 absolute right-5 top-4 cursor-pointer hover:text-red-600 hover:stroke-none stroke-zinc-500'/>
+        <div className='md:w-80 md:h-auto bg-white w-44 relative  hover:shadow-md rounded-xl'>
+            {/* <RiHeart3Fill className='text-transparent stroke-[1px] absolute right-3 top-3 cursor-pointer hover:text-red-600 hover:stroke-none stroke-zinc-4 00'/> */}
             <div className='w-full md:min-h-72 max-h-72 bg-zinc-300 rounded-t-xl overflow-hidden'>
                 <NavLink to={`/products/${id}`}>
                     {imageurl? 
@@ -62,7 +62,7 @@ function Product({
                         <h4 className='text-zinc-400 font-poppins md:text-lg text-sm font-bold'>Price:</h4>
                         <h1 className='font-bold text-zinc-800 font-DMSans text-xl md:text-2xl'>{`₹${price}`}</h1>
                     </div>
-                    <div className='bg-blue-700 p-3 cursor-pointer scale-75 md:scale-100 rounded-xl'>
+                    <div className='bg-rose-600 p-3 cursor-pointer scale-75 md:scale-100 rounded-xl'>
                         <RiShoppingCartLine color='white'/>
                     </div>
                 </div>
