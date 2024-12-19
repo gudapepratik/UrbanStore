@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {login,logout} from '../store/authSlice'
 import CreateAcc  from './CreateAcc'
-import {dashboardimg1, Home3, Home4, HomeCardimg1, HomeCardimg2, HomeCardimg3, HomeCardimg4, HomeCardimg5, shopusbox, shopusguarantee, shopusvan} from '../assets/asset.js'
+import {dashboardimg1, Home1, Home2, Home3, Home4, HomeCardimg1, HomeCardimg2, HomeCardimg3, HomeCardimg4, HomeCardimg5, shopusbox, shopusguarantee, shopusvan} from '../assets/asset.js'
 import Footer from './Footer.jsx'
 import Testimonial from './Testimonial/Testimonial.jsx'
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -13,6 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { useNavigate } from 'react-router'
 import { setFilter } from '../store/productSlice.js'
+import { ReactNotifications, Store } from 'react-notifications-component'
 
 function Home() {
   const user = useSelector(state => state.authSlice.userData)
@@ -25,7 +26,33 @@ function Home() {
   // dispatch
   const dispatch = useDispatch()
 
-  const filterCategory = useSelector(state => state.productSlice.filter)
+  const filterCategory = useSelector(state => state.productSlice.filterCategories)
+
+  // notification triggerer helper function
+  const triggerNotification = ({type, title, message}) => {
+    // dummy notification to handle notifications
+    const notification = {
+        title: "Add title message",
+        message: "Configurable",
+        type: "success",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+        animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+    };
+    
+    Store.addNotification({
+        ...notification,
+        type: type,
+        title: title,
+        message: message,
+        container: 'top-right',
+        dismiss: {
+            duration: 2000,
+            pauseOnHover: true,
+        }
+    });
+  };
 
   useEffect(() => {
     // use window.scrollTo() method to scroll to top smoothly whenever user clicks on next or prev buttons
@@ -35,8 +62,13 @@ function Home() {
     })
   },[])
 
-  const handleNavigateToProducts = (filterToSearch) => {
-    dispatch(setFilter(filterToSearch))
+  const handleNavigateToProducts = (filterToSearch,type) => {
+    if(type === 'single') {
+      dispatch(setFilter([filterToSearch]))
+    }
+    if(type === 'multi'){
+      dispatch(setFilter(filterToSearch))
+    }
     navigate('/products')
   }
 
@@ -46,6 +78,7 @@ function Home() {
       {/* main part */}
       <div>
         {/* first image corousal */}
+      <ReactNotifications/>
         
         <div className='w-full mb-4 md:mb-0 relative md:-top-32 snap-x scrollbar-hide overflow-scroll'>
               {/* <img src={dashboardimg1} alt="" className=' object-cover -z-10'/> */}
@@ -73,7 +106,7 @@ function Home() {
                 </SwiperSlide>
                 <SwiperSlide className="w-full">
                   <img
-                    src={HomeCardimg1}
+                    src={Home1}
                     alt=""
                     className="w-full h-auto object-cover shadow-md transition-all duration-300"
                   />
@@ -87,7 +120,7 @@ function Home() {
                 </SwiperSlide>
                 <SwiperSlide className="w-full">
                   <img
-                    src={dashboardimg1}
+                    src={Home2}
                     alt=""
                     className="w-full h-auto object-cover  transition-all duration-300"
                   />
@@ -156,19 +189,27 @@ function Home() {
                   {/* left part */}
                   <div className='w-3/5 h-96 md:h-full flex flex-col gap-3 p-4 pr-1.5'>
                     <div className='w-full h-1/2  overflow-hidden'>
-                      <img src={HomeCardimg1}  alt=""  className='  scale-125 translate-y-4 -translate-x-5 md:-translate-x-0  md:hover:scale-110 md:-translate-y-2 md:scale-105    transition-all duration-300'/>
+                      <img src={dashboardimg1}  alt=""  
+                      className='  scale-125 translate-y-4 -translate-x-5 md:-translate-x-0  md:hover:scale-110 md:-translate-y-2 md:scale-105    transition-all duration-300'
+                      onClick={() => handleNavigateToProducts(filterCategory['unisex']['general'],'multi')}
+                      />
 
                     </div>
                     <div className='grid grid-cols-2 w-full h-1/2 gap-3'>
                           <div className='overflow-hidden'>  
-                            <img src={HomeCardimg2} alt="" className='md:object-cover object-contain scale-150 translate-x-5 md:scale-100 md:translate-x-0  h-full md:hover:scale-105 transition-all  duration-300'/>
+                            <img src={HomeCardimg2} alt="" 
+                            className='md:object-cover object-contain scale-150 translate-x-5 md:scale-100 md:translate-x-0  h-full md:hover:scale-105 transition-all  duration-300'
+                            onClick={() => handleNavigateToProducts(filterCategory['men']['winterWear'],'multi')}
+                            
+                            />
+
                           </div>
                           <div className=' overflow-hidden'>
                           <img 
                             src={HomeCardimg3} 
                             alt="" 
                             className='object-cover  h-full md:hover:scale-105 transition-all duration-300'
-                            onClick={() => handleNavigateToProducts('Footwear')}
+                            onClick={() => handleNavigateToProducts(filterCategory['men']['footwear'],'multi')}
                             />
                           </div>
                     </div>
@@ -178,11 +219,18 @@ function Home() {
                   <div className='w-2/5 h-96 md:h-svh'>
                         <div className='flex flex-col h-full p-4 pl-1.5 gap-3'>
                           <div className='w-full h-3/5  overflow-hidden'>
-                          <img src={HomeCardimg5} alt="" className='md:hover:scale-110 h-full object-cover  md:scale-105 transition-all duration-300'/>
+                          <img 
+                          src={HomeCardimg5} alt="" 
+                          className='md:hover:scale-110 h-full object-cover  md:scale-105 transition-all duration-300'
+                          onClick={() => handleNavigateToProducts(`Men's Hoodies & Sweatshirts`,'single')}
+                          />
 
                           </div>
                           <div className='w-full h-2/5  overflow-hidden'>
-                            <img src={HomeCardimg4} alt="" className='md:hover:scale-105 md:-translate-y-20 -translate-y-5  transition-all duration-300'/>
+                            <img src={HomeCardimg4} alt="" 
+                            className='md:hover:scale-105 md:-translate-y-20 -translate-y-5  transition-all duration-300'
+                            onClick={() => handleNavigateToProducts(`Men's Sunglasses`,'single')}
+                            />
                           </div>
 
                         </div>
@@ -192,8 +240,8 @@ function Home() {
             </div>
 
 
-            {/* cards  */}
-            <div className='w-full px-3 md:px-0 flex justify-center'>
+            {/* cards (under implementation) */}
+            {/* <div className='w-full px-3 md:px-0 flex justify-center'>
               <Swiper
               slidesPerView={4}
               className="md:w-[calc(100vw-28rem)] w-full"
@@ -220,10 +268,10 @@ function Home() {
               </Swiper>
 
 
-            </div>
+            </div> */}
 
             {/* Testimonial page  */}
-            <Testimonial/>
+            <Testimonial notificationTrigger={triggerNotification}/>
         {/* footer render */}
           <Footer/>
         </div>

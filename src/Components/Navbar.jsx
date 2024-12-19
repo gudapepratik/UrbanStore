@@ -82,8 +82,9 @@ function Navbar() {
     }
   };
 
-  const handleNavigateToProducts = (filterToSearch) => {
-    dispatch(setFilter(filterToSearch))
+  const handleNavigateToProducts = (filterToSearch,isMobile) => {
+    if(isMobile) setShowMenu(false)
+    dispatch(setFilter([filterToSearch]))
   }
 
   return (
@@ -130,7 +131,7 @@ function Navbar() {
                 isActive ? "text-red-400" : "text-black"
               }`
             }
-            onClick={() => handleNavigateToProducts('All Products')}
+            onClick={() => handleNavigateToProducts('All Products',false)}
           >
             Products
           </NavLink>
@@ -261,7 +262,7 @@ function Navbar() {
               <li>
                 <NavLink
                   to="/products"
-                  onClick={() => setShowMenu(false)}
+                  onClick={() => handleNavigateToProducts('All Products',true)}
                   className={({ isActive }) =>
                     `text-xl  font-DMSans font-bold  ${
                       isActive ? "text-red-400" : "text-black"

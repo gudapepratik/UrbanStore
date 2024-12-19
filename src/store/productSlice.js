@@ -6,7 +6,7 @@ const initialState = {
     isloading: false,
     key: "",
     error: null,
-    filter: 'All Products',
+    filter: ['All Products'],
     onPage: 1,
     filterCategories: {
         "men": {
@@ -128,6 +128,7 @@ const productSlice = createSlice({
         },
 
         setFilter: (state,action) => {
+            console.log(action.payload)
             // reset the page
             state.onPage = 1
             // set the filter

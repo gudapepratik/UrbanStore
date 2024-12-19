@@ -283,7 +283,7 @@ function Productscomp() {
                     <button className='flex gap-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-md shadow-inner'
                     onClick={() => setReloader(prev => !prev)}
                     ><RiRefreshLine/>Reload</button>
-                    <button className='flex gap-2 bg-[#00B75F] hover:bg-[#00B12F] text-white p-2 rounded-md shadow-inner'
+                    <button className='flex gap-2 bg-[#00B75F] hover:bg-[#00ad5a] text-white p-2 rounded-md shadow-inner'
                     onClick={() => setAddProductModal(true)}
                     ><RiAddCircleLine/> Add Product</button>
             </div>

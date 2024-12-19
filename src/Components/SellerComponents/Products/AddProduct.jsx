@@ -191,7 +191,8 @@ function AddProduct({ CloseModal }) {
 
   // product details
   const [productDetails, setProductDetails] = useState({
-    name: "",
+    brandName: "",
+    productName: "",
     category: "",
     price: 0,
     stock: 0,
@@ -252,7 +253,8 @@ function AddProduct({ CloseModal }) {
 
   // handle product submit and adding to database
   const handleSubmit = async () => {
-    console.log(productDetails)
+    // join the brand name and product title
+    const productName = productDetails.brandName + " | " + productDetails.productName
     try{
       setIsLoading(true)
       if(productDetails.name === '' || productDetails.category === '' || productDetails.description === ''|| productDetails.price === 0 || productDetails.stock === 0 || !imagefile){
@@ -272,16 +274,14 @@ function AddProduct({ CloseModal }) {
       const fileids = uploadres.map((file) => {
         return file.$id
       })
-      // console.log(fileids, typeof(fileids))
 
       // add a new entry in productDetails named image containing array of file id of images
       // setProductDetails(prev => ({...prev,'image': fileids, 'sellerid': userData.$id, 'seller': userData.name}))
-      const productData = {...productDetails,'image': fileids, 'sellerid': userData.$id, 'seller': userData.name}
-      // console.log(productData)
+      const productData = {...productDetails,'image': fileids, 'sellerid': userData.$id, 'seller': userData.name, 'name': productName}
 
       // step 3: Add the product to products database
       await sellerService.addNewProduct(productData)
-      // console.log(res)
+
       Store.addNotification({
         ...notification,
         type: "success",
@@ -343,39 +343,45 @@ function AddProduct({ CloseModal }) {
             <div className="w-full p-5 flex font-DMSans flex-col gap-4">
               {/* Product name field */}
               <div className="flex flex-col gap-1">
-                <label htmlFor="name" className="text-lg">
-                  Product Name
+                <label htmlFor="brandName" className="text-base">
+                  Brand Name
                 </label>
                 <input
                   type="text"
                   name=""
-                  id="name"
+                  id="brandName"
+                  placeholder="Enter brand name"
+                  className="w-fit p-2 text-base rounded-md focus:outline-none focus:shadow-inner focus:border-[1px] border-zinc-700"
+                  required
+                  defaultValue={productDetails['brandName']}
+                  onChange={(e) => handleProductData(e, "brandName")}
+                />
+                <label htmlFor="name" className="text-base">
+                  Product title
+                </label>
+                <input
+                  type="text"
+                  name=""
+                  id="productName"
                   placeholder="Enter product name"
                   className="w-fit p-2 text-base rounded-md focus:outline-none focus:shadow-inner focus:border-[1px] border-zinc-700"
                   required
-                  defaultValue={productDetails['name']}
-                  onChange={(e) => handleProductData(e, "name")}
+                  defaultValue={productDetails['productName']}
+                  onChange={(e) => handleProductData(e, "productName")}
                 />
               </div>
 
               {/* Product category field  */}
               <div className="flex flex-col gap-1">
-                <label htmlFor="name" className="text-lg">
+                <label htmlFor="name" className="text-base">
                   Product Category
                 </label>
                 <select
                   id="Category"
-                  className="p-2 rounded-md shadow-inner w-fit"
+                  className="p-2 rounded-md w-fit"
                   onChange={(e) => handleProductData(e, "category")}
                   value={productDetails["category"]}
                 >
-                  {/* {productCategories && productCategories['men'].map((item) =>
-                    item.subCategories.map((subs, key) => (
-                      <option key={key} value={subs} className="font-DMSans">
-                        {subs}
-                      </option>
-                    ))
-                  )} */}
                   {Object.entries(productCategories.men).map(([category, items]) => (
                                 items.map((item,key) => (
                                   <option key={key} value={item} className="font-DMSans">
@@ -407,7 +413,7 @@ function AddProduct({ CloseModal }) {
             <div className="w-full p-5 flex font-DMSans flex-col gap-4">
               {/* Product price field */}
               <div className="flex flex-col gap-1">
-                <label htmlFor="name" className="text-lg">
+                <label htmlFor="name" className="text-base">
                   Product Price
                 </label>
                 <input
@@ -425,7 +431,7 @@ function AddProduct({ CloseModal }) {
 
               {/* Product stock field  */}
               <div className="flex flex-col gap-1">
-                <label htmlFor="name" className="text-lg">
+                <label htmlFor="name" className="text-base">
                   Available Stock 
                 </label>
                 <input
@@ -449,7 +455,7 @@ function AddProduct({ CloseModal }) {
           <div className="w-full p-5 flex font-DMSans flex-col gap-4">
             {/* Product description field */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="description" className="text-lg">
+              <label htmlFor="description" className="text-base">
                 Product description
               </label>
               <textarea 
@@ -473,7 +479,7 @@ function AddProduct({ CloseModal }) {
             <div className="w-full p-5 flex font-DMSans flex-col gap-4">
               {/* Product price field */}
               <div className="flex flex-col gap-1">
-                <label htmlFor="description" className="text-lg">
+                <label htmlFor="description" className="text-base">
                   Product images
                 </label>
                 <input 
@@ -498,39 +504,43 @@ function AddProduct({ CloseModal }) {
 
           {/* Step 4 : Review and submit */}
           {CurrentFormStep === 4 && (
-            <div className="w-full p-5 flex font-DMSans flex-col gap-4">
-              {/* Product price field */}
-              <div className="flex flex-col gap-1">
-                <div className="text-lg flex gap-2 rounded-md  border-[1px] border-zinc-400 p-1 shadow-inner">
-                  Product name: <p className="font-bold ">{productDetails.name}</p>
+            <div className="flex w-[100%-5rem] flex-col mx-4 bg-zinc-100 shadow-inner p-3 border-[1px] border-zinc-300 text-zinc-900">
+                    <div className="flex w-full flex-col gap-2">
+                      <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 pb-2">
+                        <label className="text-zinc-700">Product name</label>
+                        <h3 className="text-base w-2/3 text-left">{productDetails.brandName + " | " + productDetails.productName}</h3>
+                      </div>
+
+                      <div className="w-full flex items-center text-left justify-between border-b-[1px] border-zinc-300 py-2">
+                        <label className="text-zinc-700">Product Category</label>
+                        <h3 className="text-base w-2/3 text-left">{productDetails.category}</h3>
+                      </div>
+
+                      <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
+                        <label className="text-zinc-700">Product price</label>
+                        <h3 className="text-base w-2/3 text-left">{`₹ ${productDetails.price}`}</h3>
+                      </div>
+
+                      <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
+                        <label className="text-zinc-700">Product stock</label>
+                        <h3 className="text-base w-2/3 text-left">{productDetails.stock}</h3>
+                      </div>
+
+                      <div className="w-full flex items-start justify-between border-b-[1px] border-zinc-300 py-2">
+                        <label className="text-zinc-700">Product description</label>
+                        <h3 className="text-base w-2/3 text-left h-24 overflow-scroll whitespace-pre-wrap scrollbar-hide">{productDetails.description}</h3>
+                      </div>
+
+                      <div className="w-full flex items-start justify-between border-zinc-300 pt-2">
+                        <label className="text-zinc-700">Product images</label>
+                        <div className="flex gap-4">
+                            {imagepreview && imagepreview.map((previewurl) => {
+                              return (<img key={previewurl} src={`${previewurl}`} alt="uploaded images" className="w-20 rounded-md"/>)
+                            })}
+                        </div>
+                      </div>
+                    </div>
                 </div>
-                <div className="text-lg flex gap-2 rounded-md border-[1px] border-zinc-400 p-1 shadow-inner">
-                  Product Category: <p className="font-bold">{productDetails.category}</p>
-                </div>
-                <div className="text-lg flex gap-2 rounded-md border-[1px] border-zinc-400 p-1 shadow-inner">
-                  Product price: <p className="font-bold">{`₹ ${productDetails.price}`}</p>
-                </div>
-                <div className="text-lg flex gap-2 rounded-md border-[1px] border-zinc-400 p-1 shadow-inner">
-                  Product Stock: <p className="font-bold">{productDetails.stock}</p>
-                </div>
-                
-                <div className="flex flex-col gap-2 rounded-md border-[1px] border-zinc-400 p-1 shadow-inner text-lg">
-                  <h2>Product description: </h2>
-                  <div className="h-28 overflow-scroll whitespace-pre-wrap scrollbar-hide">
-                    {productDetails.description}
-                  </div>
-                </div>
-                <div className="text-lg">
-                  Product images: 
-                </div>
-                {/* image previews  */}
-                <div className="flex gap-4">
-                      {imagepreview && imagepreview.map((previewurl) => {
-                        return (<img key={previewurl} src={`${previewurl}`} alt="uploaded images" className="w-20 rounded-md"/>)
-                      })}
-                </div>
-              </div>
-            </div>
           )}
 
 

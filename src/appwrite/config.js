@@ -18,17 +18,19 @@ export class Service{
     }
 
     // method to get all the products in database collection - products to show them on screen
-    async getProducts({limit,onpage,category}) {
+    async getProducts({limit,onpage,categories}) {
         console.log(limit,onpage)
+        // const categoryArray = [category]
+        console.log(categories)
         try {
-            if(category && category !== 'All Products'){
-                console.log(category)
+            if(categories && categories.at(0) !== 'All Products'){
+                console.log(categories)
                 return await this.databases.listDocuments(
                     conf.appwriteDatabaseID, // param1 - database id
                     conf.appwriteproductsId, // param2 - collection id - products
                     // following queries are for pagination
                     [
-                        Query.equal('category',category),
+                        Query.equal('category',categories),
                         Query.limit(limit),
                         Query.offset(limit*(onpage-1)),
                     ]

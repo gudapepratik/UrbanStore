@@ -13,5 +13,7 @@ import HomeCardimg4 from './3.png'
 import HomeCardimg5 from './4.png'
 import Home3 from './Home3.png'
 import Home4 from './Home4.png'
+import Home1 from './Home1.png'
+import Home2 from './Home2.png'
 import UsBusinesslogo from './businesslogo.png'
-export {dashboardimg1,shopusbox,shopusguarantee,Home3,Home4,shopusvan, footerimg, loginimg, emptybagimg, emptycartimg, HomeCardimg1,HomeCardimg2,HomeCardimg3,HomeCardimg4,HomeCardimg5,UsBusinesslogo};
+export {dashboardimg1,shopusbox,shopusguarantee,Home1,Home2,Home3,Home4,shopusvan, footerimg, loginimg, emptybagimg, emptycartimg, HomeCardimg1,HomeCardimg2,HomeCardimg3,HomeCardimg4,HomeCardimg5,UsBusinesslogo};

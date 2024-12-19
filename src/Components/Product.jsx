@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { productimg, image } from './index'
+import { productimg} from './index'
 import { RiHeart2Line, RiHeart3Fill, RiShoppingCartLine } from '@remixicon/react'
 import {useSelector,useDispatch} from 'react-redux'
 import { NavLink } from 'react-router-dom'
@@ -7,13 +7,19 @@ import { stringify } from 'postcss'
 import service from '../appwrite/config'
 import ProductPageSkeleton from './ProductPageSkeleton'
 import Skeleton from 'react-loading-skeleton'
+import { Store } from 'react-notifications-component'
+import Loader from './Loader/Loader'
 
 function Product({
     productId,
 }) {
 
     // loading state
+    const [isSkeletonloading,setIsSkeletonLoading] = useState(false)
     const [isloading,setIsLoading] = useState(false)
+
+    const userStatus = useSelector(state => state.authSlice?.status)
+    const userid = useSelector(state => state.authSlice?.userData?.$id)
 
     // splitted name state brandName and productTitle
     const [splittedName,setSplittedName] = useState([])
@@ -23,6 +29,32 @@ function Product({
     
     // preview image state
     const [previewImgUrl,setPreviewImgUrl] = useState(null)
+
+    // notification triggerer helper function
+    const triggerNotification = ({type, title, message}) => {
+        // dummy notification to handle notifications
+        const notification = {
+            title: "Add title message",
+            message: "Configurable",
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+            animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+        };
+        
+        Store.addNotification({
+            ...notification,
+            type: type,
+            title: title,
+            message: message,
+            container: 'top-right',
+            dismiss: {
+                duration: 2000,
+                pauseOnHover: true,
+            }
+        });
+    };
 
     // method to split the product.name into brandName and product title
     const splitName = (name) => {
@@ -42,7 +74,7 @@ function Product({
 
     // method to get the product details (from products collection) and preview image url (from storage bucket)  for the currentOrder using the product id
     const fetchProduct = async () => {
-        setIsLoading(true)
+        setIsSkeletonLoading(true)
         // fetch the product using the product id
         const product = await service.getSingleProduct(productId)
 
@@ -56,12 +88,65 @@ function Product({
         setProduct(product)
         setPreviewImgUrl(previewUrl.href)
 
-        setIsLoading(false)
+        setIsSkeletonLoading(false)
     }
+
+      // method to handle add to cart
+    const handleAddToCart = async (e) => {
+        try {
+        // refer to the button
+        const button = e.currentTarget
+        // set loading state
+        setIsLoading(true)
+        if (userStatus) {
+            const data = await service.addItemToCart({
+            userid,
+            productid: productId,
+            quantity: 1,
+            previewImgUrl: previewImgUrl
+            })
+            // if the product already exists then , the data.quantity will be greater than 1
+            // so check this condition and update the store accordingly
+            if (data) {
+            if (data.quantity > 1) {
+                triggerNotification({
+                type: "info",
+                title: "Item Quantity Updated",
+                message: "This item is already in your cart. Quantity has been updated."
+                })
+            } else {
+                triggerNotification({
+                type: "success",
+                title: "Item Added to Cart",
+                message: "The selected item has been added to your cart. Continue shopping or view your cart for details."
+                })
+            }
+            }
+        } else {
+            button.disabled = true
+            triggerNotification({
+            type: "warning",
+            title: "User not logged in",
+            message: "The current operation could not be completed, consider login first"
+            })
+            // disable the button so that the user will not be able to click the button again and flood the screen 
+            // with notifications
+        }
+        } catch (error) {
+        triggerNotification({
+            type: "danger",
+            title: "Error while adding to cart",
+            message: `${error.message}`
+        })
+        } finally{
+        setIsLoading(false)
+        }
+    };
 
   return (
     <>
-        {isloading ?
+        {isloading && <Loader/>}
+        {isSkeletonloading ?
             <ProductPageSkeleton/>
         :
             <> 
@@ -86,9 +171,12 @@ function Product({
                                 <h4 className='text-zinc-400 font-poppins md:text-lg text-sm font-bold'>Price:</h4>
                                 <h1 className='font-bold text-zinc-800 font-DMSans text-xl md:text-2xl'>{`₹${product?.price}`}</h1>
                             </div>
-                            <div className='bg-rose-600 p-3 cursor-pointer scale-75 md:scale-100 rounded-xl'>
-                                <RiShoppingCartLine color='white'/>
-                            </div>
+                            <button 
+                                className='bg-rose-600 p-3 cursor-pointer scale-75 md:scale-100 rounded-xl'
+                                onClick={handleAddToCart}
+                            >
+                                <RiShoppingCartLine color='white' size={22} className=''/>
+                            </button>
                         </div>
                     </div>
                 </div>

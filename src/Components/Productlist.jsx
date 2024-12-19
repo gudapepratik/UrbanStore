@@ -190,6 +190,9 @@ function Productlist() {
   // state to scroll to top on page changes
   const location = useLocation()
 
+  // loading state
+  const [isloading,setIsLoading] = useState(false)
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -200,12 +203,11 @@ function Productlist() {
   // method to fetch products
   const fetchProducts = async () => {
     try {
-
       // backend call to fetch products
       const response = await service.getProducts({
         limit: 8,
         onpage: onPage,
-        category: filter
+        categories: filter
       });
 
       // set the product in local state
@@ -253,7 +255,7 @@ function Productlist() {
     <>
       {/* Notification component  */}
       <ReactNotifications/>
-
+      {isloading && <Loader/>}
       <div className="container overflow-x-hidden mx-auto p-6">
             {/* Filter category box  */}
             <div className="flex flex-col w-full">

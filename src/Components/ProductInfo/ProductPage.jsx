@@ -219,14 +219,14 @@ function ProductPage() {
   const handleClickBuybutton = async (e) => {
     e.preventDefault();
     try{
-      // set state
-      setToShowBuyComp(true)
       // check if user not logged in
       if(!userstatus) {
         // disable the button if the user is not logged in
         e.target.disabled = true; 
         throw new Error("User not logged in");
       }
+      // set state
+      setToShowBuyComp(true)
     } catch(error) {
       // if any error comes then it will notify and break the further excecution
       triggerNotification({
