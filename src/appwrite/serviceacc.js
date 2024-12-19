@@ -17,8 +17,8 @@ const users = new Users(client);
 const addMemberToTeam = async ({userId,userName,userEmail}) => {
     try{
         // verify the user (email verification)
-        await users.updateEmailVerification(userId,true)
-        
+        // await users.updateEmailVerification(userId,true)
+
         const response = await teams.createMembership(
             Config.appwritesellerTeamId,
             ["Seller"],
