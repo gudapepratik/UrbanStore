@@ -13,12 +13,12 @@ function Sidebar() {
 
             {/* Options section  */}
             <div className='w-full py-10 px-5 gap-3 flex flex-col items-center'>
-                <Optionbtn label={'Dashboard'} path={'/sellerdashboard'} iconname={'RiHome5Line'}/>
+                <Optionbtn label={'Dashboard'} path={'/sellerdashboard'} iconname={'RiHome5Line'} exact={true}/>
                 <Optionbtn label={'Orders'} path={'/sellerdashboard/orders'} iconname={'RiReceiptLine'}/>
                 <Optionbtn label={'Products'} path={'/sellerdashboard/products'} iconname={'RiShoppingBag3Line'}/>
-                <Optionbtn label={'Customers'} path={'/sellerdashboard/customers'} iconname={'RiAccountCircleLine'}/>
+                {/* <Optionbtn label={'Customers'} path={'/sellerdashboard/customers'} iconname={'RiAccountCircleLine'}/>
                 <Optionbtn label={'Messages'} path={'/sellerdashboard/messages'} iconname={'RiMessage2Line'}/>
-                <Optionbtn label={'Settings'} path={'/sellerdashboard/settings'} iconname={'RiSettings3Line'}/>
+                <Optionbtn label={'Settings'} path={'/sellerdashboard/settings'} iconname={'RiSettings3Line'}/> */}
             </div>
 
         </div>

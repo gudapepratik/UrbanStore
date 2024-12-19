@@ -1,16 +1,44 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {login,logout} from '../store/authSlice'
 import CreateAcc  from './CreateAcc'
-import {dashboardimg1, HomeCardimg1, HomeCardimg2, HomeCardimg3, HomeCardimg4, HomeCardimg5, shopusbox, shopusguarantee, shopusvan} from '../assets/asset.js'
+import {dashboardimg1, Home3, Home4, HomeCardimg1, HomeCardimg2, HomeCardimg3, HomeCardimg4, HomeCardimg5, shopusbox, shopusguarantee, shopusvan} from '../assets/asset.js'
 import Footer from './Footer.jsx'
-import Notificationbox from './Notificationbox/Notificationbox.jsx'
 import Testimonial from './Testimonial/Testimonial.jsx'
+import { Swiper, SwiperSlide } from 'swiper/react';
+// import required modules
+import { EffectFade,Autoplay, Pagination, Navigation, FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { useNavigate } from 'react-router'
+import { setFilter } from '../store/productSlice.js'
 
 function Home() {
   const user = useSelector(state => state.authSlice.userData)
   const status = useSelector(state => state.authSlice.status)
   // console.log(user)
+
+  // navigate
+  const navigate = useNavigate()
+
+  // dispatch
+  const dispatch = useDispatch()
+
+  const filterCategory = useSelector(state => state.productSlice.filter)
+
+  useEffect(() => {
+    // use window.scrollTo() method to scroll to top smoothly whenever user clicks on next or prev buttons
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  },[])
+
+  const handleNavigateToProducts = (filterToSearch) => {
+    dispatch(setFilter(filterToSearch))
+    navigate('/products')
+  }
 
   return (
 
@@ -18,13 +46,59 @@ function Home() {
       {/* main part */}
       <div>
         {/* first image corousal */}
-        {/* <Notificationbox type={'success'} message='Account Created Successfully!!'/> */}
-        <div className='w-full mb-5 md:mb-0 relative md:-top-20'>
-              <img src={dashboardimg1} alt="" className=' object-cover -z-10'/>
+        
+        <div className='w-full mb-4 md:mb-0 relative md:-top-32 snap-x scrollbar-hide overflow-scroll'>
+              {/* <img src={dashboardimg1} alt="" className=' object-cover -z-10'/> */}
+              <Swiper
+                style={{
+                  '--swiper-pagination-color': '#e11d48',
+                }}
+                spaceBetween={10}
+                slidesPerView={1}
+                pagination={{ clickable: true }}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                loop = {Infinity}
+                modules={[Autoplay, Pagination, Navigation]}
+                className="w-full"
+              >
+                <SwiperSlide className="w-full">
+                  <img
+                    src={Home3}
+                    alt=""
+                    className="w-full h-auto object-cover shadow-md transition-all duration-300 "
+                  />
+                </SwiperSlide>
+                <SwiperSlide className="w-full">
+                  <img
+                    src={HomeCardimg1}
+                    alt=""
+                    className="w-full h-auto object-cover shadow-md transition-all duration-300"
+                  />
+                </SwiperSlide>
+                <SwiperSlide className="w-full">
+                  <img
+                    src={Home4}
+                    alt=""
+                    className="w-full h-auto object-cover shadow-md transition-all duration-300 "
+                  />
+                </SwiperSlide>
+                <SwiperSlide className="w-full">
+                  <img
+                    src={dashboardimg1}
+                    alt=""
+                    className="w-full h-auto object-cover  transition-all duration-300"
+                  />
+                </SwiperSlide>
+              
+          </Swiper>
         </div>
+        
         <div className=''>
             {/* Why shop from here section  */}
-            <div className='flex w-full justify-around'>   
+            <div className='flex w-full items-center justify-around md:justify-evenly'>   
                 <div className='flex flex-col items-center gap-2 selection:bg-rose-500 selection:text-white'>
                   <svg viewBox="-0.5 -0.5 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" id="Delivery-Truck--Streamline-Iconoir" className=' stroke-zinc-800 w-6 md:w-14'><desc>Delivery Truck Streamline Icon: https://streamlinehq.com</desc><path d="M7.663408333333334 17.734437500000002c1.0594375 0 1.9182958333333335 -0.8587625000000001 1.9182958333333335 -1.9182958333333335s-0.8588583333333334 -1.9182958333333335 -1.9182958333333335 -1.9182958333333335 -1.9182958333333335 0.8588583333333334 -1.9182958333333335 1.9182958333333335 0.8588583333333334 1.9182958333333335 1.9182958333333335 1.9182958333333335Z"  stroke-miterlimit="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path><path d="M17.2548875 17.734437500000002c1.0594375 0 1.9182958333333335 -0.8587625000000001 1.9182958333333335 -1.9182958333333335s-0.8588583333333334 -1.9182958333333335 -1.9182958333333335 -1.9182958333333335 -1.9182958333333335 0.8588583333333334 -1.9182958333333335 1.9182958333333335 0.8588583333333334 1.9182958333333335 1.9182958333333335 1.9182958333333335Z"  stroke-miterlimit="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path><path d="M9.629620833333334 15.816141666666665h4.747870833333334V5.8410416666666665c0 -0.31787916666666666 -0.2576958333333333 -0.5754791666666668 -0.5755750000000001 -0.5754791666666668H0.9493250000000001"  stroke-linecap="round" stroke-width="1"></path><path d="M5.409408333333333 15.816141666666665H3.4431000000000003c-0.31778333333333336 0 -0.5754791666666668 -0.2576 -0.5754791666666668 -0.5754791666666668v-4.6997625" stroke-linecap="round" stroke-width="1"></path><path d="M1.9085208333333334 8.142958333333334h3.836591666666667"  stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path><path d="M14.377491666666666 8.142958333333334h5.38085c0.22741250000000002 0 0.43355000000000005 0.133975 0.5259333333333334 0.34174166666666667l1.7167583333333336 3.8628500000000003c0.03267916666666667 0.0736 0.04964166666666667 0.1532375 0.04964166666666667 0.23373750000000001v2.659375c0 0.31787916666666666 -0.2576958333333333 0.5754791666666668 -0.5755750000000001 0.5754791666666668h-1.8223666666666667"  stroke-linecap="round" stroke-width="1"></path><path d="M14.377491666666666 15.816141666666665h0.9591"  stroke-linecap="round" stroke-width="1"></path></svg>
                   <div className='flex items-center justify-center flex-col '>
@@ -49,6 +123,29 @@ function Home() {
                 </div>
             </div>
 
+            {/* slider  */}
+            {/* <div className='relative m-auto w-[500px] flex overflow-hidden bg-rose-500 before:absolute before:left-0 before:top-0 before:z-[2] before:h-full before:w-[100px] before:bg-[linear-gradient(to_right,white_0%,rgba(255,255,255,0)_100%)] before:content-[""] after:absolute after:right-0 after:top-0 after:z-[2] after:h-full after:w-[100px] after:-scale-x-100 after:bg-[linear-gradient(to_right,white_0%,rgba(255,255,255,0)_100%)] after:content-[""]'>
+                <ul className='flex items-center justify-center gap-2 animate-infinite-slider text-sm font-DMSans font-bold text-white'>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+      
+                </ul>
+                <ul className='flex items-center justify-center animate-infinite-slider text-sm font-DMSans font-bold text-white'>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+                  <li className='text-nowrap'>UrbanStore * </li>
+      
+                </ul>
+            </div> */}
 
             {/* Image section  */}
             <div className='w-full  py-8'>
@@ -59,7 +156,7 @@ function Home() {
                   {/* left part */}
                   <div className='w-3/5 h-96 md:h-full flex flex-col gap-3 p-4 pr-1.5'>
                     <div className='w-full h-1/2  overflow-hidden'>
-                      <img src={HomeCardimg1} alt=""  className='  scale-125 translate-y-4 -translate-x-5 md:-translate-x-0  md:hover:scale-110 md:-translate-y-2 md:scale-105    transition-all duration-300'/>
+                      <img src={HomeCardimg1}  alt=""  className='  scale-125 translate-y-4 -translate-x-5 md:-translate-x-0  md:hover:scale-110 md:-translate-y-2 md:scale-105    transition-all duration-300'/>
 
                     </div>
                     <div className='grid grid-cols-2 w-full h-1/2 gap-3'>
@@ -67,7 +164,12 @@ function Home() {
                             <img src={HomeCardimg2} alt="" className='md:object-cover object-contain scale-150 translate-x-5 md:scale-100 md:translate-x-0  h-full md:hover:scale-105 transition-all  duration-300'/>
                           </div>
                           <div className=' overflow-hidden'>
-                          <img src={HomeCardimg3} alt="" className='object-cover  h-full md:hover:scale-105 transition-all duration-300'/>
+                          <img 
+                            src={HomeCardimg3} 
+                            alt="" 
+                            className='object-cover  h-full md:hover:scale-105 transition-all duration-300'
+                            onClick={() => handleNavigateToProducts('Footwear')}
+                            />
                           </div>
                     </div>
                   </div>
@@ -87,6 +189,37 @@ function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+
+
+            {/* cards  */}
+            <div className='w-full px-3 md:px-0 flex justify-center'>
+              <Swiper
+              slidesPerView={4}
+              className="md:w-[calc(100vw-28rem)] w-full"
+              freeMode = {true}
+              modules={[FreeMode, Pagination]}
+              >
+              
+                <SwiperSlide className="">
+                    <div className='md:w-64 w-28 h-40 md:h-72 bg-red-200'></div>
+                </SwiperSlide>
+                <SwiperSlide className="">
+                    <div className='md:w-64 w-28 h-40 md:h-72 bg-red-200'></div>
+                </SwiperSlide>
+                <SwiperSlide className="">
+                    <div className='md:w-64 w-28 h-40 md:h-72 bg-red-200'></div>
+                </SwiperSlide>
+                <SwiperSlide className="">
+                    <div className='md:w-64 w-28 h-40 md:h-72 bg-red-200'></div>
+                </SwiperSlide>
+                <SwiperSlide className="">
+                    <div className='md:w-64 w-28 h-40 md:h-72 bg-red-200'></div>
+                </SwiperSlide>
+
+              </Swiper>
+
+
             </div>
 
             {/* Testimonial page  */}

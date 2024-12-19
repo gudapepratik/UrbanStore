@@ -21,7 +21,7 @@ export class Service{
     async getProducts({limit,onpage,category}) {
         console.log(limit,onpage)
         try {
-            if(category && category !== 'All products'){
+            if(category && category !== 'All Products'){
                 console.log(category)
                 return await this.databases.listDocuments(
                     conf.appwriteDatabaseID, // param1 - database id
@@ -64,7 +64,7 @@ export class Service{
 
     // method to add and item to cart when user clicks 'ADD TO CART'
     // we will require the authenticated userid, productid, quantity
-    async addItemToCart({userid, productid, qty}) {
+    async addItemToCart({userid, productid, quantity,previewImgUrl}) {
         try{
             // check if the document already exists // match using userid and productid
             const document = await this.databases.listDocuments(
@@ -95,7 +95,8 @@ export class Service{
                     { // json data 
                         user_id: userid,
                         productid: productid,
-                        quantity: qty,
+                        quantity: quantity,
+                        previewImgUrl: previewImgUrl,
                         added_at: new Date().toISOString(),
                     }   
                 )
@@ -109,19 +110,14 @@ export class Service{
     // method to delete a post (databases,deleteDocument)
     async deleteCartItem(documentid) {
         try {
-
             // no need to return the response
         await this.databases.deleteDocument(
                 conf.appwriteDatabaseID, // param1 - database id
                 conf.appwritecartsId, // param2 - collection id
                 documentid, // param3 - id of document to be deleted
             )
-
-            // just return true indicating that the post is deleted
-            return true;
         } catch(error) {
-            console.log(`Apprite service :: deleteCartItem ${error}`)
-            return false;
+            throw new Error(error.message)
         }
     }
 
@@ -144,34 +140,104 @@ export class Service{
         }
     }
 
-    // userid - id of the user placing the order
-    // cartItems - array of objects containing items in cart as objects 
-    async placeOrder(userid, cartItems){
+    // userid - id of the user placing the order 
+    async placeOrder({customer_id,seller_id,price,product_id,paymentMethod,quantity,address,expected_delivery_date}){
         try {
-        const productids = cartItems.map(item => item.product_id) // array containing all the product id of the products in cart
-        const totalAmount = cartItems.reduce((total,item) => total + item.price*item.quantity,0)
-
         await this.databases.createDocument(
             conf.appwriteDatabaseID, // param1 -- database id
             conf.appwriteordersId, // param2 -- collection id -- orders
             ID.unique(),
             {
-                user_id: userid,
-                product_ids: productids,
-                total_amount: totalAmount,
-                status: "pending",
-                created_at: new Date().toISOString(),
+                customer_id: customer_id,
+                product_id: product_id,
+                seller_id: seller_id,
+                quantity: quantity,
+                price: price,
+                paymentMethod: paymentMethod,
+                State: "placed",
+                address: address,
+                'is-cancelled': false,
+                expected_delivery_date: expected_delivery_date.toISOString()
             }
 
         )
-        console.log("Order placed Successfully")
-        return true 
         } catch(error){
-            console.log(`Error: placeOrder ${error}`)
-            return false
+            throw new Error(error.message);
         }
+    }
+    
+    
+    async updateProductQuantity({productId,quantityToReduce}) {
+        try {
+            // get the current product to get the current product stock
+            const product = await this.getSingleProduct(productId)
+            const currentStock = product.stock
 
-    } 
+            await this.databases.updateDocument(
+                conf.appwriteDatabaseID,
+                conf.appwriteproductsId,
+                productId,
+                {
+                    stock: currentStock-quantityToReduce,
+                }
+            )
+        } catch(error) {
+            throw new Error(error.message);
+        }
+    }
+
+
+    // method to get all the items in orders collection
+    // each call will retrive the 'limit' no. of documents for page no. 'onpage' in most recent to most lastly added order
+    async getAllOrders({limit,onpage,customer_id,filterCategory}) {
+        try{
+            if(filterCategory === 'allOrders') {
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    [
+                        Query.equal("customer_id",customer_id),
+                        Query.orderDesc(''),
+                        Query.limit(limit),
+                        Query.offset(limit*(onpage-1)),
+                    ]
+                )
+            } else{
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    [
+                        Query.equal("customer_id",customer_id),
+                        Query.equal('State',filterCategory.toLowerCase()),
+                        Query.orderDesc(''),
+                        Query.limit(limit),
+                        Query.offset(limit*(onpage-1)),
+                    ]
+                )
+            }
+        } catch(error) {
+            throw new Error(error.message);
+            
+        }
+    }
+
+    // method to cancel order
+    async cancelOrder(orderId) {
+        try{
+            await this.databases.updateDocument(
+                conf.appwriteDatabaseID,
+                conf.appwriteordersId,
+                orderId,
+                {
+                    'State': "cancelled",
+                    'is-cancelled': true
+                }
+            )
+        } catch(error){
+            throw new Error(error.message);
+            
+        }
+    }
 
     async getImageUrl(fileid){
         try {
@@ -184,7 +250,6 @@ export class Service{
             console.log(`Error : getImageUrl ${error}`)
         }
     }
-
 
     // search products
     async searchProductsbyname(key) {

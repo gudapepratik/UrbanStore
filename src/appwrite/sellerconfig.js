@@ -19,17 +19,19 @@ export class sellerService{
 
     // method to get all the products in database collection(products) that are added by the current seller
     // also can filter if category is specified
-    async getProducts(sellerid,category) {
+    async getProducts({sellerid,category}) {
         try {
-            if(!category && category === '') {
+            if(category === 'All Products') {
                 return await this.databases.listDocuments(
                     conf.appwriteDatabaseID, // param1 - database id
                     conf.appwriteproductsId, // param2 - collection id - products
                     // Query to get all documents having sellerid equals to current sellerid (i.e. all products added by the seller)
+                    // get in order - most recent to old 
                     [
-                        Query.equal('sellerid',sellerid)
+                        Query.equal('sellerid',sellerid),
+                        Query.orderDesc('')
                     ]
-                    )
+                )
             }
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseID, // param1 - database id
@@ -37,9 +39,10 @@ export class sellerService{
                 // Query to get all documents having sellerid equals to current sellerid (i.e. all products added by the seller)
                 [
                     Query.equal('sellerid',sellerid),
-                    Query.equal('category',category)
+                    Query.equal('category',category),
+                    Query.orderDesc('')
                 ]
-                )
+            )
         } catch (error) {
             throw new Error(error);
         }
@@ -59,7 +62,6 @@ export class sellerService{
             )
         } catch(error){
             throw new Error(error);
-            
         }
     }
 
@@ -91,40 +93,176 @@ export class sellerService{
         }
     }
 
-    // method to remove a product from "products" collection
-    // for this we require the unique id of the product document (product.$id)
-    async deleteProduct(documentid) {
-        try {
-
-            // no need to return the response
-        await this.databases.deleteDocument(
-                conf.appwriteDatabaseID, // param1 - database id
-                conf.appwriteproductsId, // param2 - collection id (products)
-                documentid, // param3 - id of document to be deleted
+    // method to update the product details
+    async updateProduct({productId,updateData}){
+        try{
+            return await this.databases.updateDocument(
+                conf.appwriteDatabaseID,
+                conf.appwriteproductsId,
+                productId,
+                {   // data to be updated
+                    name: updateData.name,
+                    price: updateData.price,
+                    description: updateData.description,
+                    stock: updateData.stock,
+                }
             )
-
-            // just return true indicating that the post is deleted
-            return true;
-        } catch(error) {
-            console.log(`Apprite sellerservice :: deleteProduct ${error}`)
-            // else return false if an error is occurred while deleting the product
-            return false;
+        } catch(error){ 
+            throw new Error(error.message);
         }
     }
 
-    async getImageUrl(fileid){
+    // method to remove a product from "products" collection
+    // for this we require the unique id of the product document (product.$id)
+    async deleteProduct({documentid, imageIds}) {
         try {
-            return await this.bucket.getFilePreview(
-                conf.appwriteproductimageBucketId,
-                fileid
+            // delete all the images from bucket
+            const response = await Promise.all(
+                imageIds.map(async (fileId) => (
+                    await this.deleteFile(fileId)
+                ))
             )
 
-        } catch(error){
+            if(response) {
+                // no need to return the response
+                return await this.databases.deleteDocument(
+                    conf.appwriteDatabaseID, // param1 - database id
+                    conf.appwriteproductsId, // param2 - collection id (products)
+                    documentid, // param3 - id of document to be deleted
+                )
+            } else{
+                throw new Error(response)
+            }
+        } catch(error) {
             throw new Error(error);
+        }
+    }
+
+    // method to delete an image file from appwrite bucket(storage)
+    async deleteFile(fileId) {
+        try{
+            await this.bucket.deleteFile(
+                conf.appwriteproductimageBucketId,
+                fileId
+            )
+        } catch(error){
+            throw new Error(error.message);
             
         }
     }
-    
+
+    // method to get the preview of any image using the fileid
+    async getImageUrl(fileid){
+        try {
+            return this.bucket.getFilePreview(
+                conf.appwriteproductimageBucketId,
+                fileid
+            )
+        } catch(error){
+            throw new Error(error);
+        }
+    }
+
+    // method to get all the orders that the seller got using the seller id
+    async getOrders({sellerId, filterCategory}) {
+        try{
+            if(filterCategory === 'allorders') {
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    [
+                        Query.equal('seller_id',sellerId),
+                        Query.orderDesc('') // get most recent order first
+                    ]
+                )
+            } else{
+                return await this.databases.listDocuments(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    [
+                        Query.equal('seller_id',sellerId),
+                        Query.equal('State',filterCategory),
+                        Query.orderDesc('') // get most recent order first
+                    ]
+                )
+            }
+        } catch(error) {
+            throw new Error(error);
+        }
+    }
+
+    // get details of single product using the product id
+    async getSingleProduct(productId) {
+        try{
+            return await this.databases.getDocument(
+                conf.appwriteDatabaseID,
+                conf.appwriteproductsId,
+                productId
+            )
+        } catch(error) {
+            throw new Error(error);
+        }
+    }
+
+    // method to update the order State
+    async updateOrderStatus({orderId,productId,currentStock,quantityOrdered,updateStatus}){
+        try{
+            // ship order
+            if(updateStatus === 'ship'){
+                // decrease the order stock
+                const res = await this.databases.updateDocument(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteproductsId,
+                    productId,
+                    {
+                        'stock': currentStock-quantityOrdered
+                    }
+                )
+                
+                if(!res) throw new Error(res)
+
+                // update the order status in orders collection
+                return await this.databases.updateDocument(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    orderId,
+                    {
+                        'State': 'shipped'
+                    }
+                )
+            }
+
+            // deliver order
+            if(updateStatus === 'deliver'){
+                // update the order status in orders collection
+                return await this.databases.updateDocument(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    orderId,
+                    {
+                        'State': 'delivered'
+                    }
+                )
+            }
+
+            // cancel order
+            if(updateStatus === 'cancel'){
+                // update the order status in orders collection
+                return await this.databases.updateDocument(
+                    conf.appwriteDatabaseID,
+                    conf.appwriteordersId,
+                    orderId,
+                    {
+                        'is-cancelled': true,
+                        'State': 'cancelled',
+                    }
+                )
+            }
+
+        } catch(error){
+            throw new Error(error.message);
+        }
+    }
 }
 
 

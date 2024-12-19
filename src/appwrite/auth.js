@@ -20,54 +20,59 @@ export class AuthService {
         this.teams = new Teams(this.client);
     }
 
-    // create a new customer account
+    // method to create a new customer account
     async createAccount({email, password, name}) {
         try {
-           const userAccount =  await this.account.create(ID.unique(), email,password,name);
-           console.log(userAccount)
+            // create new user account
+            await this.account.create(ID.unique(), email,password,name)
 
-           if (userAccount) {
-
-            // call another method // agar user account successfully bana toh use direct login karwa sakta hai
+            // call another method to login the user directly if the account is successfully registered
             return this.login({email,password});
-            // return userAccount;
-           } else {
-            // agar account create nahi hua to woh error return karo , baki appwrite handle kar lega
-                return userAccount;
-           }
         } catch(error) {
-            // throw error;
-            console.log("Error :: CreateAccount")
+            // throw error otherwise
+            throw new Error(error.message)
         }
     }
 
-    // create a new seller account (changes can be done / not finalized)
+    // method to create a new seller account
     async RegisterSeller({email,password,name}) {
-        // first create a new user and then give them the membership of the team "seller"
+        // create a new user and then give them the membership of the team "seller"
         try{
             // 1. create a new user
             const user = await this.account.create(ID.unique(), email, password,name)
-            console.log(user)
 
-            const res = await this.account.createEmailPasswordSession(email,password)
-            console.log(res)
+            // 2. login user
+            const loginResponse = await this.account.createEmailPasswordSession(email,password)
 
-            const response = await this.account.createVerification('http://localhost:5173/sellerdashboard/login')
-            // after this it will be redirected to login page. implementation after this is in sellerlogin.jsx component
-            // if(response) {
-            //     alert("Check Your email for verification")
-            // }
-            return response
+            // 3. add the logged in user to seller team (using appwrite server SDK to directly add to team without email verification required)
+            const teamData = await this.AddToTeam({
+                userId: loginResponse.userId,
+                userEmail: email,
+                userName: name
+            })
+            
+            // get the data of currently logged in user (seller)
+            const userData = await this.getCurrentUser()
+
+            // combine the userData and team data and return it
+            const data = {
+                ...userData,
+                'teamId': teamData?.teamId,
+                'teamName': teamData?.teamName,
+                'roles': teamData?.roles
+            }
+
+            return data
         } catch(error){
-            console.log("Error :: Registerseller",error)
-            throw new Error(error);
+            throw new Error(error)
         }
     }
 
-    // function to call the addMemberToTeam() function in server sdk
+    // method to call the addMemberToTeam() function in server sdk
     async AddToTeam({userId,userName,userEmail}) {
         try {
             const response = await addMemberToTeam({userId,userName,userEmail})
+            return response
         } catch(error){
             // console.log("Error AddToTeam: ",error)
             throw new Error(error)
@@ -75,10 +80,10 @@ export class AuthService {
         }
     }
     
+    // method to create a emailPassword session for user i.e. login session
     async login({email ,password}, type) {
         try {
             const response =  await this.account.createEmailPasswordSession(email,password)
-            console.log(response)
 
             // check if the current logged in user is a Seller account
             const inTeam = await this.teams.list([Query.equal('name','Seller')])
@@ -103,33 +108,31 @@ export class AuthService {
             }
 
         } catch(error) {
-            // throw error;
-            console.log("Error :: login",error.message)
+            // throw error
             throw new Error(error);
             
         }
     }
 
+    // method to get the details of currently logged in user
     async getCurrentUser() {
         try {
             return await this.account.get();
         } catch(error) {
-            console.log("appwrite service :: getCurrentUser")
+            throw new Error(error.message);
+            
         }
         
         return null;
     }
     
+    // method to logout current user across all devices
     async logOut() {
-        
         try {
-            // we are using deleteSessions() because user agar logout kar rha hai toh
-            // usne jha jha bhi login kara tha , laptop , mobile, etc, (ise session kehte hai) un sabse woh logout ho
-            // jaye
+            // deleteSessions() will kill all the active session of currently logged in user across all devices
             await this.account.deleteSessions();
         } catch (error) {
-            console.log("appwrite service :: logout",error)
-            
+            throw new Error(error.message)
         }
     }
 }

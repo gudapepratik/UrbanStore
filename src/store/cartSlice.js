@@ -2,13 +2,6 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
     cartitems: [],
-    // cartitems is an array which will contain objects having product info
-    // object --> {
-            // productid: ""
-            // productname: ""
-            // price: ""
-            // quantity: 0,1,2,...
-    //}
     totalAmount: 0,
     // this is to be used when a new item is added
     isnewitemadded: false
@@ -21,22 +14,16 @@ const cartSlice = createSlice({
         addToCart: (state,action) =>{
             // check if the item to be added is already in the list
             const itemtoadd = action.payload
-            // console.log("item to add",itemtoadd,state.cartitems)
-            // const alreadyexists = state.cartitems.find(item => item.productid === itemtoadd.productid)
-            // console.log(alreadyexists)
-            // if not exists
-            // if(!alreadyexists){
-                state.cartitems.push({
-                    documentid: itemtoadd.documentid,
-                    productid: itemtoadd.productid,
-                    name: itemtoadd.name,
-                    price: itemtoadd.price,
-                    quantity: itemtoadd.quantity,
-                    imgurl: itemtoadd.imgurl
-                })
-            // } else{
-                // alreadyexists.quantity += 1
-            // }
+            
+            const alreadyexists = state.cartitems.find(item => item.documentid === itemtoadd.documentid)
+            
+            // if not exists then add it to redux state
+            if(!alreadyexists){
+                state.cartitems.push(itemtoadd)
+            } else{
+                // item already exists, hence increament the quantity
+                alreadyexists.quantity += 1
+            }
 
             state.totalAmount += itemtoadd.price*itemtoadd.quantity
         },
@@ -58,10 +45,20 @@ const cartSlice = createSlice({
 
         setIsNewItemAdded: (state,action) => {
             state.isnewitemadded = !state.isnewitemadded
+        },
+
+        updateItemQuantity: (state,action) => {
+            // find the item
+            const itemToUpdate = state.cartitems.find((item) => item.documentid === action.payload.documentid)
+            const qtyDifferece = itemToUpdate.quantity-action.payload.updatedQuantity
+            // update the totalAmount
+            state.totalAmount -= itemToUpdate.price*qtyDifferece
+            // update the item quantity
+            itemToUpdate.quantity = action.payload.updatedQuantity
         }
     },
 })
 
-export const {addToCart,removeFromCart,clearCart,setIsNewItemAdded} = cartSlice.actions
+export const {addToCart,removeFromCart,clearCart,setIsNewItemAdded,updateItemQuantity} = cartSlice.actions
 
 export default cartSlice.reducer

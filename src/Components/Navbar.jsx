@@ -6,6 +6,7 @@ import {
   RiMenu2Line,
   RiProfileFill,
   RiSearchLine,
+  RiShoppingBag4Line,
   RiShoppingCart2Line,
   RiUser3Line,
 } from "@remixicon/react";
@@ -20,6 +21,7 @@ import Searchbar from "./SearchBar/Searchbar";
 import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
 import 'react-notifications-component/dist/theme.css' // react notification css theme
 import 'animate.css/animate.min.css' // react notification animation class
+import { setFilter } from "../store/productSlice";
 
 
 function Navbar() {
@@ -80,6 +82,10 @@ function Navbar() {
     }
   };
 
+  const handleNavigateToProducts = (filterToSearch) => {
+    dispatch(setFilter(filterToSearch))
+  }
+
   return (
     <div className="flex w-full sticky top-0 bg-white z-40 min-h-24 items-center px-4 md:px-8 lg:px-16 justify-between">
 
@@ -124,19 +130,63 @@ function Navbar() {
                 isActive ? "text-red-400" : "text-black"
               }`
             }
+            onClick={() => handleNavigateToProducts('All Products')}
           >
             Products
           </NavLink>
         </li>
         {userStatus ? (
-          <li>
-            <button
-              className="text-white bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </li>
+          <>
+            <li>
+              <NavLink 
+                to="/cart"
+                className={({ isActive }) =>
+                  `font-bold  ${
+                    isActive ? "text-red-400" : "text-black"
+                  }`
+                }
+              >
+                <RiShoppingCart2Line 
+                  size={21} 
+                  className={({ isActive }) =>
+                    `font-bold  ${
+                      isActive ? "text-red-400" : "text-black"
+                    }`
+                  }
+                />
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink 
+                to="/orders" 
+                className={({ isActive }) =>
+                  `font-bold  ${
+                    isActive ? "text-red-400" : "text-black"
+                  }`
+                }
+              >
+                <RiShoppingBag4Line 
+                  size={21} 
+                  className={({ isActive }) =>
+                    `font-bold  ${
+                      isActive ? "text-red-400" : "text-black"
+                    }`
+                  }
+                />
+              </NavLink>
+            </li>
+          
+          
+            <li>
+              <button
+                className="text-white bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </li>
+          </>
         ) : (
           <li>
             <NavLink
@@ -167,11 +217,6 @@ function Navbar() {
               </NavLink>
           </li>
         }
-        <li>
-          <NavLink to="/cart" className="p-2">
-            <RiShoppingCart2Line size={21} />
-          </NavLink>
-        </li>
       </ul>
 
       {/* Hamburger Menu for Mobile */}
@@ -226,17 +271,59 @@ function Navbar() {
                   Products
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink 
+                  to="/cart" 
+                  onClick={() => setShowMenu(false)} 
+                  className={({ isActive }) =>
+                    `text-xl flex font-DMSans font-bold  ${isActive ? "text-red-400" : "text-black"
+                    }`
+                  }
+                >
+                    <RiShoppingCart2Line 
+                      size={22} 
+                      className={({ isActive }) =>
+                        `text-xl  font-DMSans font-bold  ${isActive ? "text-red-400" : "text-black"
+                        }`
+                      } 
+                    /> 
+                  <p className="font-bold font-DMSans text-xl">Cart</p>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink 
+                  to="/orders" 
+                  onClick={() => setShowMenu(false)} 
+                  className={({ isActive }) =>
+                    `text-xl flex font-DMSans font-bold  ${isActive ? "text-red-400" : "text-black"
+                    }`
+                  }
+                >
+                <RiShoppingBag4Line 
+                  size={22} 
+                  className={({ isActive }) =>
+                    `text-xl  font-DMSans font-bold  ${isActive ? "text-red-400" : "text-black"
+                    }`
+                  }  
+                /> 
+                  <p className="font-bold font-DMSans text-xl">Orders</p>
+                </NavLink>
+              </li>
+
+             
               <li>
                 {userStatus ? (
-                  <button
-                    className="text-white font-DMSans bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md"
-                    onClick={() => {
-                      handleLogout();
-                      setShowMenu(false);
-                    }}
-                  >
-                    Logout
-                  </button>
+                    <button
+                      className="text-white font-DMSans bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md"
+                      onClick={() => {
+                        handleLogout();
+                        setShowMenu(false);
+                      }}
+                    >
+                      Logout
+                    </button>
                 ) : (
                   <NavLink
                     to="/login"
@@ -250,11 +337,6 @@ function Navbar() {
                     Login
                   </NavLink>
                 )}
-              </li>
-              <li>
-                <NavLink to="/cart" onClick={() => setShowMenu(false)} className={`flex gap-2`}>
-                  <p className="font-bold font-DMSans text-xl">Cart</p> <RiShoppingCart2Line size={24} className="text-black" />
-                </NavLink>
               </li>
             </ul>
           </div>

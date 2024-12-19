@@ -34,11 +34,16 @@ export default {
         slideOUt: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-100%)' },
+        },
+        infiniteSlider: {
+          from: {transform: 'translateX(0)'},
+          to: {transform: 'translateX(-100%)'},
         }
       },
       animation: {
         slideIn: 'slideIn 0.3s ease-out forwards',
         slideOut: 'slideOut 0.3s ease-out forwards',
+        ['infinite-slider']: 'infiniteSlider 25s linear infinite',
       },
       maskImage: {
         'fade-right': 'linear-gradient(90deg, black 30%, transparent)',
@@ -61,8 +66,8 @@ export default {
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           textOverflow: 'ellipsis',
-          WebkitMaskImage: 'linear-gradient(90deg, black 70%, transparent)',
-          maskImage: 'linear-gradient(90deg, black 70%, transparent)',
+          WebkitMaskImage: 'linear-gradient(90deg, black 90%, transparent)',
+          maskImage: 'linear-gradient(90deg, black 85%, transparent)',
         },
       });
     },

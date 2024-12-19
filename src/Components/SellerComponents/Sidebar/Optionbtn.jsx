@@ -2,7 +2,7 @@ import { RiAccountCircleLine,RiReceiptLine,RiShoppingBag3Line, RiBox3Line, RiDas
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-function Optionbtn({label,path,iconname}) {
+function Optionbtn({label,path,iconname,exact}) {
 
     // Store all icons in an object
     const icons = {
@@ -24,7 +24,7 @@ function Optionbtn({label,path,iconname}) {
           `w-full flex px-8 py-3 cursor-pointer hover:bg-[#00B75F] ${isActive? 'bg-[#00B75F]' : 'bg-white'} ${isActive? 'text-white' : 'text-zinc-800'} hover:text-white rounded-md gap-5 shadow-inner`
         }
         to={`${path}`}
-
+        end={exact}
         >
             {Icon && <Icon className = ' text-current'/>}
             <h3 className='font-DMSans font-semibold text-current'>{label}</h3>

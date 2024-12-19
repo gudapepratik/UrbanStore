@@ -18,137 +18,144 @@ import { ReactNotifications, Store } from 'react-notifications-component' // rea
 import 'react-notifications-component/dist/theme.css' // react notification css theme
 import 'animate.css/animate.min.css' // react notification animation class
 
+// gsap animation library
+import { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
 function AddProduct({ CloseModal }) {
   // product categories
-  const productCategories = [
-    {
-      category: "Apparel & Accessories",
-      subCategories: [
-        "Men’s Clothing",
-        "Women’s Clothing",
-        "Kids' Clothing",
-        "Footwear",
-        "Bags & Luggage",
-        "Jewelry & Accessories",
-      ],
-    },
-    {
-      category: "Electronics",
-      subCategories: [
-        "Mobile Phones & Tablets",
-        "Computers & Laptops",
-        "Cameras & Photography",
-        "Audio & Headphones",
-        "Wearable Tech",
-        "Home Appliances",
-      ],
-    },
-    {
-      category: "Home & Living",
-      subCategories: [
-        "Furniture",
-        "Kitchenware",
-        "Bedding & Mattresses",
-        "Home Decor",
-        "Storage & Organization",
-        "Lighting",
-      ],
-    },
-    {
-      category: "Beauty & Personal Care",
-      subCategories: [
-        "Skincare",
-        "Makeup",
-        "Hair Care",
-        "Fragrances",
-        "Health Supplements",
-        "Personal Hygiene",
-      ],
-    },
-    {
-      category: "Sports & Outdoors",
-      subCategories: [
-        "Sports Equipment",
-        "Outdoor Gear",
-        "Camping & Hiking",
-        "Exercise & Fitness",
-        "Sportswear",
-      ],
-    },
-    {
-      category: "Books & Stationery",
-      subCategories: [
-        "Fiction & Non-fiction Books",
-        "Educational & Reference Books",
-        "Magazines & Comics",
-        "Office Supplies",
-        "Art & Craft Supplies",
-      ],
-    },
-    {
-      category: "Toys & Baby Products",
-      subCategories: [
-        "Toys & Games",
-        "Baby Clothing",
-        "Strollers & Car Seats",
-        "Diapers & Baby Care",
-      ],
-    },
-    {
-      category: "Food & Beverages",
-      subCategories: [
-        "Snacks & Packaged Foods",
-        "Beverages",
-        "Condiments & Spices",
-        "Fresh Produce",
-        "Organic & Health Foods",
-      ],
-    },
-    {
-      category: "Health & Wellness",
-      subCategories: [
-        "Supplements & Vitamins",
-        "Fitness Equipment",
-        "Wellness Gadgets",
-        "First Aid & Medical Supplies",
-      ],
-    },
-    {
-      category: "Automotive",
-      subCategories: [
-        "Car Accessories",
-        "Bike Accessories",
-        "Car Care Products",
-        "Replacement Parts",
-      ],
-    },
-    {
-      category: "Pet Supplies",
-      subCategories: [
-        "Pet Food",
-        "Pet Accessories",
-        "Pet Grooming",
-        "Pet Toys",
-      ],
-    },
-    {
-      category: "Grocery Essentials",
-      subCategories: [
-        "Household Cleaning Supplies",
-        "Paper Products",
-        "Laundry Supplies",
-      ],
-    },
-    {
-      category: "Garden & Outdoor Living",
-      subCategories: [
-        "Garden Tools",
-        "Plants & Seeds",
-        "Outdoor Furniture",
-        "Barbecue & Grill Supplies",
-      ],
-    },
-  ];
+  // const productCategories = [
+  //   {
+  //     category: "Apparel & Accessories",
+  //     subCategories: [
+  //       "Men’s Clothing",
+  //       "Women’s Clothing",
+  //       "Kids' Clothing",
+  //       "Footwear",
+  //       "Bags & Luggage",
+  //       "Jewelry & Accessories",
+  //     ],
+  //   },
+  //   {
+  //     category: "Electronics",
+  //     subCategories: [
+  //       "Mobile Phones & Tablets",
+  //       "Computers & Laptops",
+  //       "Cameras & Photography",
+  //       "Audio & Headphones",
+  //       "Wearable Tech",
+  //       "Home Appliances",
+  //     ],
+  //   },
+  //   {
+  //     category: "Home & Living",
+  //     subCategories: [
+  //       "Furniture",
+  //       "Kitchenware",
+  //       "Bedding & Mattresses",
+  //       "Home Decor",
+  //       "Storage & Organization",
+  //       "Lighting",
+  //     ],
+  //   },
+  //   {
+  //     category: "Beauty & Personal Care",
+  //     subCategories: [
+  //       "Skincare",
+  //       "Makeup",
+  //       "Hair Care",
+  //       "Fragrances",
+  //       "Health Supplements",
+  //       "Personal Hygiene",
+  //     ],
+  //   },
+  //   {
+  //     category: "Sports & Outdoors",
+  //     subCategories: [
+  //       "Sports Equipment",
+  //       "Outdoor Gear",
+  //       "Camping & Hiking",
+  //       "Exercise & Fitness",
+  //       "Sportswear",
+  //     ],
+  //   },
+  //   {
+  //     category: "Books & Stationery",
+  //     subCategories: [
+  //       "Fiction & Non-fiction Books",
+  //       "Educational & Reference Books",
+  //       "Magazines & Comics",
+  //       "Office Supplies",
+  //       "Art & Craft Supplies",
+  //     ],
+  //   },
+  //   {
+  //     category: "Toys & Baby Products",
+  //     subCategories: [
+  //       "Toys & Games",
+  //       "Baby Clothing",
+  //       "Strollers & Car Seats",
+  //       "Diapers & Baby Care",
+  //     ],
+  //   },
+  //   {
+  //     category: "Food & Beverages",
+  //     subCategories: [
+  //       "Snacks & Packaged Foods",
+  //       "Beverages",
+  //       "Condiments & Spices",
+  //       "Fresh Produce",
+  //       "Organic & Health Foods",
+  //     ],
+  //   },
+  //   {
+  //     category: "Health & Wellness",
+  //     subCategories: [
+  //       "Supplements & Vitamins",
+  //       "Fitness Equipment",
+  //       "Wellness Gadgets",
+  //       "First Aid & Medical Supplies",
+  //     ],
+  //   },
+  //   {
+  //     category: "Automotive",
+  //     subCategories: [
+  //       "Car Accessories",
+  //       "Bike Accessories",
+  //       "Car Care Products",
+  //       "Replacement Parts",
+  //     ],
+  //   },
+  //   {
+  //     category: "Pet Supplies",
+  //     subCategories: [
+  //       "Pet Food",
+  //       "Pet Accessories",
+  //       "Pet Grooming",
+  //       "Pet Toys",
+  //     ],
+  //   },
+  //   {
+  //     category: "Grocery Essentials",
+  //     subCategories: [
+  //       "Household Cleaning Supplies",
+  //       "Paper Products",
+  //       "Laundry Supplies",
+  //     ],
+  //   },
+  //   {
+  //     category: "Garden & Outdoor Living",
+  //     subCategories: [
+  //       "Garden Tools",
+  //       "Plants & Seeds",
+  //       "Outdoor Furniture",
+  //       "Barbecue & Grill Supplies",
+  //     ],
+  //   },
+  // ];
+
+  const productCategories = useSelector(state => state.productSlice.filterCategories)
 
   // loading state
   const [isloading,setIsLoading] = useState(false)
@@ -167,7 +174,6 @@ function AddProduct({ CloseModal }) {
   // seller details to retrive seller id and name (from redux) {userData.$id and userData.name}
   const userData = useSelector(state => state.authSlice.userData)
 
-
   //  1: Basic Product Information, 2: Pricing & Stock Details, 3: Product Description, 4: Product Images, 5: Review & Submit
   const setTitle = [
     "Basic Product Information",
@@ -175,7 +181,8 @@ function AddProduct({ CloseModal }) {
     "Product Description",
     "Product Images",
     "Review & Submit",
-  ];
+  ]
+  
   const [CurrentFormStep, setCurrentFormStep] = useState(0);
 
   // image and image preview state
@@ -240,6 +247,8 @@ function AddProduct({ CloseModal }) {
     console.log(e.target.value, type);
     setProductDetails((prev) => ({ ...prev, [type]: `${e.target.value}` }));
   };
+
+  
 
   // handle product submit and adding to database
   const handleSubmit = async () => {
@@ -310,14 +319,14 @@ function AddProduct({ CloseModal }) {
 
   return (
     <>
-      <div className="fixed flex justify-center items-center w-full h-full top-0 left-0 bg-transparent bg-opacity-5 backdrop-blur-sm ">
+      <div className={`fixed flex justify-center items-center w-full h-full top-0 left-0 bg-black bg-opacity-50 backdrop-blur-sm z-50`}>
         {/* loading state render  */}
         {isloading && <Loader/>}
 
         {/* notifications  */}
         <ReactNotifications/>
 
-        <div className="flex flex-col w-1/2 bg-zinc-200 p-2 shadow-inner rounded-md border-[1px] border-zinc-300 bg-opacity-70">
+        <div className="Container flex flex-col w-1/2 bg-zinc-200 p-2 rounded-md border-[1px] border-zinc-300">
 
           {/* step title and close Modal button  */}
           <div className="w-full p-4 px-5 flex justify-between items-center">
@@ -360,13 +369,34 @@ function AddProduct({ CloseModal }) {
                   onChange={(e) => handleProductData(e, "category")}
                   value={productDetails["category"]}
                 >
-                  {productCategories.map((item) =>
+                  {/* {productCategories && productCategories['men'].map((item) =>
                     item.subCategories.map((subs, key) => (
                       <option key={key} value={subs} className="font-DMSans">
                         {subs}
                       </option>
                     ))
-                  )}
+                  )} */}
+                  {Object.entries(productCategories.men).map(([category, items]) => (
+                                items.map((item,key) => (
+                                  <option key={key} value={item} className="font-DMSans">
+                                  {item}
+                                </option>
+                                ))
+                    ))}
+                  {Object.entries(productCategories.women).map(([category, items]) => (
+                                items.map((item,key) => (
+                                  <option key={key} value={item} className="font-DMSans">
+                                  {item}
+                                </option>
+                                ))
+                    ))}
+                  {Object.entries(productCategories.unisex).map(([category, items]) => (
+                                items.map((item,key) => (
+                                  <option key={key} value={item} className="font-DMSans">
+                                  {item}
+                                </option>
+                                ))
+                    ))}
                 </select>
               </div>
             </div>

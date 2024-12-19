@@ -5,10 +5,10 @@ function Testimonial() {
   return (
     <>
         <div className='w-full flex py-10 justify-center items-center '>
-                <div className='md:w-6/12 w-10/12 flex flex-col bg-zinc-50 px-5 rounded-lg py-3 gap-5 items-center justify-center selection:bg-rose-500 selection:text-white'>
+                <div className='md:w-6/12 w-10/12 flex flex-col bg-zinc-50 px-5 rounded-lg py-3 gap-2 items-center justify-center selection:bg-rose-500 selection:text-white'>
                     <div className='text-center '>
                             <div className=''>
-                                <h1 className='md:text-4xl text-2xl font-DMSans font-extrabold text-zinc-800 text-center'>Subscribe to our newsletter to get updates to our latest collections</h1>
+                                <h1 className='md:text-4xl text-xl font-DMSans font-extrabold text-zinc-800 text-center '>Subscribe to our newsletter to get updates to our latest collections</h1>
                             </div>
 
                             <div>

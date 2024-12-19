@@ -18,15 +18,13 @@ const addMemberToTeam = async ({userId,userName,userEmail}) => {
     try{
         const response = await teams.createMembership(
             Config.appwritesellerTeamId,
-            ['seller'],
+            ["Seller"],
             userEmail,
             userId,
             undefined,
-            'http://localhost:5173/sellerdashboard/',
+            undefined,
             userName
         )
-    
-        console.log(response)
         return response
     } catch(error){
         console.log("Error addMemberToTeam: ",error)

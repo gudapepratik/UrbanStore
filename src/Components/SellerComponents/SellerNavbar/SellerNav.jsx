@@ -29,16 +29,32 @@ function SellerNav() {
     // navigate to navigate through pages
     const navigate = useNavigate()
 
-    // Notification 
-    const notification = {
-        title: "Add title message",
-        message: "Configurable",
-        type: "success",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-        animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
-      };
+    
+    // notification triggerer helper function
+    const triggerNotification = ({type, title, message}) => {
+        // dummy Notification 
+        const notification = {
+            title: "Add title message",
+            message: "Configurable",
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+            animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+        };
+
+        Store.addNotification({
+        ...notification,
+        type: type,
+        title: title,
+        message: message,
+        container: 'top-right',
+        dismiss: {
+            duration: 2000,
+            pauseOnHover: true,
+        }
+        });
+    };
     
 
     const LogoutSeller = async () => {
@@ -50,29 +66,9 @@ function SellerNav() {
                 navigate('/sellerdashboard/login')
             })
             setIsLoading(false)
-            Store.addNotification({
-                ...notification,
-                type: "info",
-                title: "Logged out successfully",
-                message: "You've successfully logged out of your account",
-                container: 'top-right',
-                dismiss: {
-                  duration: 2000,
-                  pauseOnHover: true
-                }
-            })
+            triggerNotification({type: "info", title: "Logged out successfully", message: "You've successfully logged out of your account"})
         } catch(error){
-            Store.addNotification({
-                ...notification,
-                type: "info",
-                title: "Unknown Error Occurred",
-                message: `Logout Failed: ${error.message}`,
-                container: 'top-right',
-                dismiss: {
-                  duration: 2000,
-                  pauseOnHover: true
-                }
-            })
+            triggerNotification({type: "danger", title: "Unknown Error Occurred", message: `Logout Failed: ${error.message}`})
         }
     }
 

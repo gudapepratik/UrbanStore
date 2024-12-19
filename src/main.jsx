@@ -24,6 +24,10 @@ import SellerLogin from "./Components/SellerComponents/SellerLogin/SellerLogin.j
 import SellerDashboard from "./Components/SellerComponents/Dashboard/SellerDashboard.jsx";
 import Productscomp from "./Components/SellerComponents/Products/Productscomp.jsx";
 import AddProduct from "./Components/SellerComponents/Products/AddProduct.jsx";
+import Checkout from "./Components/Checkout/Checkout.jsx";
+import Orders from "./Components/OrdersPage/Orders.jsx";
+import SellerOrders from "./Components/SellerComponents/SellerOrders/SellerOrders.jsx";
+import ErrorPage from "./Components/ErrorPage/ErrorPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,10 +38,13 @@ const router = createBrowserRouter(
       <Route path="products" element={<Productlist />} />
       <Route path="products/:id" element={<ProductPage />} />
       <Route path="cart" element = {<Cart/>} />
+      <Route path="orders" element = {<Orders/>} />
       <Route path="sellerdashboard/" element =  {<SellerDashboard/>} > 
         <Route path="login" element =  {<SellerLogin/>} />
         <Route path="products" element =  {<Productscomp/>} />
+        <Route path="orders" element =  {<SellerOrders/>} />
       </Route>
+      <Route path="*" element = {<ErrorPage/>} />
     </Route>
     
   )

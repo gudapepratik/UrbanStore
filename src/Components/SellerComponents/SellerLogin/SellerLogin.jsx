@@ -35,139 +35,127 @@ function SellerLogin() {
   const userId = searchparams.get("userId");
   const secret = searchparams.get("secret");
 
-  // dummy notification
-  const notification = {
-    title: "Add title message",
-    message: "Configurable",
-    type: "success",
-    insert: "top",
-    container: "top-right",
-    animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-    animationOut: ["animate__animated animate__fadeOut"], // `animate.css v4` classes
+  // notification triggerer helper function
+  const triggerNotification = ({type, title, message}) => {
+      // dummy notification to handle notifications
+      const notification = {
+        title: "Add title message",
+        message: "Configurable",
+        type: "success",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
+        animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
+      };
+        
+      Store.addNotification({
+        ...notification,
+        type: type,
+        title: title,
+        message: message,
+        container: 'top-right',
+        dismiss: {
+          duration: 2000,
+          pauseOnHover: true,
+        }
+      });
   };
 
   const Onsubmit = async (data) => {
-    setIsLoading(true);
-    console.log(data);
-    // setUserData(data)
+    setIsLoading(true)
     if (isnoaccount) {
       try {
-        var seller = await authService.RegisterSeller(data);
-        Store.addNotification({
-          ...notification,
-          type: "info",
-          title: "Verification email sent successfully",
-          message: "Please check your email for verification",
-          container: "top-right",
-          dismiss: {
-            duration: 2000,
-            pauseOnHover: true,
-          },
-        });
+        const sellerData = await authService.RegisterSeller(data);
+
+        // dispatch the user details to redux store
+        dispatch(login([sellerData, "Seller"]));
+        
+        // success notification
+        triggerNotification({
+          type: "success",
+          title: "Seller Account created",
+          message: "Account created successfully and registered as seller"
+        })
+
+        setTimeout(() => {
+          navigate("/sellerdashboard");
+        }, 2000);
+
       } catch (error) {
-        Store.addNotification({
-          ...notification,
+        triggerNotification({
           type: "danger",
           title: "Unknown Error Occurred",
-          message: `${error.message}`,
-          container: "top-right",
-          dismiss: {
-            duration: 2000,
-            pauseOnHover: true,
-          },
-        });
+          message: `${error.message}`
+        })
       }
     } else {
+
       try {
-        seller = await authService.login(data, "Seller");
+        const seller = await authService.login(data, "Seller");
         const currentUser = await authService.getCurrentUser();
         dispatch(login([currentUser, "Seller"]));
         // then navigate to the dashboard after 2 seconds
-        navigate("/sellerdashboard/");
+        navigate("/sellerdashboard");
         setIsLoading(false);
       } catch (error) {
-        Store.addNotification({
-          ...notification,
+        triggerNotification({
           type: "danger",
-          title: "Error",
-          message: `${error.message}`,
-          container: "top-right",
-          dismiss: {
-            duration: 2000,
-            pauseOnHover: true,
-          },
-        });
+          title: "Unknown Error Occurred",
+          message: `${error.message}`
+        })
       }
     }
     setIsLoading(false);
   };
 
-  const verifyUser = async (userId, secret) => {
-    try {
-      setIsLoading(true);
-      const res = await authService.account.updateVerification(userId, secret);
-      if (!res) throw new Error("User Verification Failed");
+  // const verifyUser = async (userId, secret) => {
+  //   try {
+  //     setIsLoading(true);
+  //     const res = await authService.account.updateVerification(userId, secret);
+  //     if (!res) throw new Error("User Verification Failed");
 
-      Store.addNotification({
-        ...notification,
-        type: "info",
-        title: "Verification Successfull",
-        message: "Creating Seller account , Please wait",
-        container: "top-right",
-        dismiss: {
-          duration: 2000,
-          pauseOnHover: true,
-        },
-      });
+  //     triggerNotification({
+  //       type: "info",
+  //       title: "Verification Successfull",
+  //       message: "Creating Seller account , Please wait"
+  //     })
 
-      // after this create membership for the user as Seller
-      // // if the user is created successfully  then add the user to the "seller" team using membership() method
-      // Get details of current logged in user
-      const userdetails = await authService.getCurrentUser();
-      const addtoteamres = await authService.AddToTeam({
-        userId: userdetails.$id,
-        userName: userdetails.name,
-        userEmail: userdetails.email,
-      });
+  //     // after this create membership for the user as Seller
+  //     // // if the user is created successfully  then add the user to the "seller" team using membership() method
+  //     // Get details of current logged in user
+  //     const userdetails = await authService.getCurrentUser();
+  //     const addtoteamres = await authService.AddToTeam({
+  //       userId: userdetails.$id,
+  //       userName: userdetails.name,
+  //       userEmail: userdetails.email,
+  //     });
 
-      // dispatch the user details to redux store
-      dispatch(login([userdetails, "Seller"]));
-      Store.addNotification({
-        ...notification,
-        type: "success",
-        title: "Seller Account registered successfully",
-        message: "Account created successfully and registered as seller",
-        container: "top-right",
-        dismiss: {
-          duration: 2000,
-          pauseOnHover: true,
-        },
-      });
-      setTimeout(() => {
-        navigate("/sellerdashboard/");
-      }, 2000);
-    } catch (error) {
-      Store.addNotification({
-        ...notification,
-        type: "danger",
-        title: "Unknown Error Occurred",
-        message: `${error.message}`,
-        container: "top-right",
-        dismiss: {
-          duration: 2000,
-          pauseOnHover: true,
-        },
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     // dispatch the user details to redux store
+  //     dispatch(login([userdetails, "Seller"]));
+  //     triggerNotification({
+  //       type: "success",
+  //       title: "Seller Account registered successfully",
+  //       message: "Account created successfully and registered as seller"
+  //     })
+  //     setTimeout(() => {
+  //       navigate("/sellerdashboard/");
+  //     }, 2000);
+  //   } catch (error) {
+  //     triggerNotification({
+  //         type: "danger",
+  //         title: "Unknown Error Occurred",
+  //         message: `${error.message}`
+  //     })
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (userId && secret) {
-      verifyUser(userId, secret);
-    }
-  }, [userId, secret]);
+  // useEffect(() => {
+  //   if (userId && secret) {
+  //     verifyUser(userId, secret);
+  //   }
+  // }, [userId, secret]);
 
   return (
     <div className="flex items-center p-5 flex-col justify-center h-screen bg-[#00b75f]">
@@ -232,7 +220,7 @@ function SellerLogin() {
                     },
                   })}
                 />
-                {errors.password && <p>{errors.password.message}</p>}
+                {errors.password && <p className="text-xs ">{errors.password.message}</p>}
               </>
             ) : (
               <>
