@@ -53,20 +53,22 @@ Here are some important dependencies used in this project:
    npm install
    ```
 3. Create a .env file in the root directory and add the following: Replace <your-appwrite-endpoint> and <your-appwrite-project-id> with your actual Appwrite configuration.
+   ```bash
    echo "REACT_APP_APPWRITE_ENDPOINT=<your-appwrite-endpoint>" >> .env
    echo "REACT_APP_APPWRITE_PROJECT_ID=<your-appwrite-project-id>" >> .env
+   ```
 
-4. Start the development server:
+5. Start the development server:
    ```bash
    npm start
    ```
-5. The application will be available at http://localhost:3000
+6. The application will be available at http://localhost:3000
 
 
-## 📝Personal Note
+## 📝 Personal Note
 This app is entirely built by me, including all assets such as images, posters, and the app's complete logic. While the app is functional, there is always room for improvement. I aim to make it more refined and meaningful with future updates.
 
 If you have any suggestions or feedback, feel free to share them. Your input is invaluable to me as I continue improving the app.
 
-##📜 License
+## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
