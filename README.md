@@ -1,6 +1,8 @@
 # UrbanStore - Online Shopping App
 
-![UrbanStore Logo](URL_TO_YOUR_LOGO) <!-- Replace with your logo URL -->
+![UrbanStore](https://github.com/user-attachments/assets/2b1665e1-759a-4cd8-a028-e6bd59931050)
+
+
 
 UrbanStore is an online shopping platform built with React and powered by Appwrite for backend services. It provides features such as user authentication, product retrieval, cart management, and order placement. The app is role-based, supporting both customer and seller functionalities. Customers can browse products and place orders, while sellers can manage products and track/cancel customer orders. The app uses Redux for state management.
 
@@ -33,6 +35,10 @@ Here are some important dependencies used in this project:
 - **react-router**: A routing library for React applications, used to manage navigation and page rendering.
 - **swiper**: A modern mobile touch slider with responsive capabilities, used for product carousels or image sliders.
 
+## 🎥 Video demo (Seller Side)
+
+https://github.com/user-attachments/assets/baa85868-456a-4b6e-a887-7265ed7d9142
+
 ## Installation
 
 ### Prerequisites
@@ -54,8 +60,8 @@ Here are some important dependencies used in this project:
    ```
 3. Create a .env file in the root directory and add the following: Replace <your-appwrite-endpoint> and <your-appwrite-project-id> with your actual Appwrite configuration.
    ```bash
-   echo "REACT_APP_APPWRITE_ENDPOINT=<your-appwrite-endpoint>" >> .env
-   echo "REACT_APP_APPWRITE_PROJECT_ID=<your-appwrite-project-id>" >> .env
+   echo "VITE_APPWRITE_ENDPOINT=<your-appwrite-endpoint>" >> .env
+   echo "VITE_APP_PROJECT_ID=<your-appwrite-project-id>" >> .env
    ```
 
 5. Start the development server:
