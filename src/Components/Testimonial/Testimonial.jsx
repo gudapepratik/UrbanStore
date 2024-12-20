@@ -34,6 +34,7 @@ function Testimonial({notificationTrigger}) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        console.log(e)
         if(email !== '') {
             notificationTrigger({
                 type: 'success',
@@ -64,14 +65,24 @@ function Testimonial({notificationTrigger}) {
                         </div>
 
                         <div className='flex gap-2 '>
-                            <input type="email" name="email" id="" placeholder='Enter your email' className='font-DMSans shadow-inner font-bold px-4 py-2 focus:outline-none border-[1px] border-zinc-600 rounded-md placeholder:font-normal placeholder:text-sm text-zinc-700'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                        <form onSubmit={handleSubmit}>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                placeholder="Enter your email"
+                                className="font-DMSans shadow-inner font-bold px-4 py-2 focus:outline-none border-[1px] border-zinc-600 rounded-md placeholder:font-normal placeholder:text-sm text-zinc-700"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
                             />
-                            <button 
-                            className='bg-zinc-800 text-white p-2 font-DMSans font-bold rounded-md'
-                            onClick={handleSubmit}
-                            >Subscribe</button>
+                            <button
+                                className="bg-zinc-800 text-white p-2 font-DMSans font-bold rounded-md"
+                                type="submit"
+                            >
+                                Subscribe
+                            </button>
+                        </form>
                         </div>
 
                         <div className='text-center'>

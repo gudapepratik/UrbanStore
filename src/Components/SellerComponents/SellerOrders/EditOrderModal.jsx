@@ -95,7 +95,7 @@ import {
             }
 
             // trigger to get update the details
-            updateDetailsTrigger()
+            // updateDetailsTrigger()
         } catch (error) {
             triggerNotification({
                 type: 'danger',

@@ -32,9 +32,6 @@ function SellerOrders() {
     // close edit modal handler
     const CloseEditModal = () => setShowEditModal(false)
 
-    // update details trigger state
-    const [updateDetails,setUpdateDetails] = useState(prev => !prev)
-
     // helper function to set the orders details to edit and set the showEditModal state
     const showEditModalHelper = (orderDetails) => {
         setShowEditModal(true)
@@ -115,14 +112,14 @@ function SellerOrders() {
 
     useEffect(() => {
         fetchOrders()
-    },[filterCategory,userData,updateDetails,reloader])
+    },[filterCategory,userData,reloader])
 
 
     return (
         <>
             <div className='w-[calc(100vw-300px)] flex p-3  flex-col gap-3'>
                 {isloading && <Loader/>}
-                {showEditModal && <EditOrderModal CloseEditModal={CloseEditModal} orderDetails={editOrderDetails} updateDetailsTrigger={setUpdateDetails}/>}
+                {showEditModal && <EditOrderModal CloseEditModal={CloseEditModal} orderDetails={editOrderDetails} />}
                 {/*top filter section  */}
                 <div className='w-full flex justify-between px-10 py-3 rounded-md bg-zinc-100 shadow-inner border-[1px] border-zinc-400'>
                     <div className='flex items-center gap-3'>
