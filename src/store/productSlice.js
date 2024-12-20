@@ -100,13 +100,13 @@ const productSlice = createSlice({
     initialState,
     reducers: {
         setProducts: (state,action) => {
-            console.log(action.payload)
-            console.log(state.key)
+            // console.log(action.payload)
+            // console.log(state.key)
             if(state.key && state.key.length > 0){
                 const filetered_products = action.payload.map(product => (
                     product.name.toLowerCase().includes(action.key)
                 ))
-                console.log(filetered_products)
+                // console.log(filetered_products)
                 state.products = filetered_products
                 state.isloading = false
             } else{
@@ -128,7 +128,7 @@ const productSlice = createSlice({
         },
 
         setFilter: (state,action) => {
-            console.log(action.payload)
+            // console.log(action.payload)
             // reset the page
             state.onPage = 1
             // set the filter

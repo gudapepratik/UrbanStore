@@ -4,7 +4,7 @@ import { useRouteError } from "react-router-dom";
 
 const ErrorPage = () => {
     const error = useRouteError();
-    console.error(error);
+    // console.error(error);
 
     return (
         <div className="w-full flex justify-center text-zinc-800 selection:bg-rose-500 selection:text-white">

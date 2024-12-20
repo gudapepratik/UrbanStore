@@ -72,7 +72,7 @@ function Checkout({CloseModal, Orders}) {
   // calcualte the total price 
   useEffect(() => {
     if(Orders.length !== 1) {
-      console.log(Orders)
+      // console.log(Orders)
       setOrderTotal(() => {
         const total = Orders.reduce((prev, curr) => prev + curr.price * Number(curr.quantity), 0); // Added 0 as the initial value
         return total;

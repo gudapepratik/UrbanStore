@@ -15,7 +15,7 @@ const authSlice = createSlice({
             state.status = true,
             state.userData = action.payload.at(0) // data of the current logged in user
             state.userType = action.payload.at(1) || "guest" // type of the current logged in user (CUstomer/Seller) default is guest
-            console.log(action.payload.at(0),action.payload.at(1))
+            // console.log(action.payload.at(0),action.payload.at(1))
         },
         logout: (state,action) => {
             state.status = false,

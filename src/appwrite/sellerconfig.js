@@ -266,8 +266,8 @@ export class sellerService{
 }
 
 
-// Service ka object banado and use export karo so that hame ek object milega and usepe ham . method se 
-// konse bhi functions access kar sakte hai
+// Create an object of the Service class and export it.
+// This way, we get a single object that we can use to access any function by calling it with a dot, like objectName.methodName().
 const sellerservice = new sellerService();
 export default sellerservice
 

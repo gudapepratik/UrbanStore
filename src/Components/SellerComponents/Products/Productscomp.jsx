@@ -16,136 +16,7 @@ import EditProductModal from './EditProductModal'
 function Productscomp() {
 
     // product categories
-    const productCategories = [
-        { 
-          category: 'Apparel & Accessories', 
-          subCategories: [
-            'All Products',
-            'Men’s Clothing', 
-            'Women’s Clothing', 
-            'Kids\' Clothing', 
-            'Footwear', 
-            'Bags & Luggage', 
-            'Jewelry & Accessories'
-          ] 
-        },
-        { 
-          category: 'Electronics', 
-          subCategories: [
-            'Mobile Phones & Tablets', 
-            'Computers & Laptops', 
-            'Cameras & Photography', 
-            'Audio & Headphones', 
-            'Wearable Tech', 
-            'Home Appliances'
-          ] 
-        },
-        { 
-          category: 'Home & Living', 
-          subCategories: [
-            'Furniture', 
-            'Kitchenware', 
-            'Bedding & Mattresses', 
-            'Home Decor', 
-            'Storage & Organization', 
-            'Lighting'
-          ] 
-        },
-        { 
-          category: 'Beauty & Personal Care', 
-          subCategories: [
-            'Skincare', 
-            'Makeup', 
-            'Hair Care', 
-            'Fragrances', 
-            'Health Supplements', 
-            'Personal Hygiene'
-          ] 
-        },
-        { 
-          category: 'Sports & Outdoors', 
-          subCategories: [
-            'Sports Equipment', 
-            'Outdoor Gear', 
-            'Camping & Hiking', 
-            'Exercise & Fitness', 
-            'Sportswear'
-          ] 
-        },
-        { 
-          category: 'Books & Stationery', 
-          subCategories: [
-            'Fiction & Non-fiction Books', 
-            'Educational & Reference Books', 
-            'Magazines & Comics', 
-            'Office Supplies', 
-            'Art & Craft Supplies'
-          ] 
-        },
-        { 
-          category: 'Toys & Baby Products', 
-          subCategories: [
-            'Toys & Games', 
-            'Baby Clothing', 
-            'Strollers & Car Seats', 
-            'Diapers & Baby Care'
-          ] 
-        },
-        { 
-          category: 'Food & Beverages', 
-          subCategories: [
-            'Snacks & Packaged Foods', 
-            'Beverages', 
-            'Condiments & Spices', 
-            'Fresh Produce', 
-            'Organic & Health Foods'
-          ] 
-        },
-        { 
-          category: 'Health & Wellness', 
-          subCategories: [
-            'Supplements & Vitamins', 
-            'Fitness Equipment', 
-            'Wellness Gadgets', 
-            'First Aid & Medical Supplies'
-          ] 
-        },
-        { 
-          category: 'Automotive', 
-          subCategories: [
-            'Car Accessories', 
-            'Bike Accessories', 
-            'Car Care Products', 
-            'Replacement Parts'
-          ] 
-        },
-        { 
-          category: 'Pet Supplies', 
-          subCategories: [
-            'Pet Food', 
-            'Pet Accessories', 
-            'Pet Grooming', 
-            'Pet Toys'
-          ] 
-        },
-        { 
-          category: 'Grocery Essentials', 
-          subCategories: [
-            'Household Cleaning Supplies', 
-            'Paper Products', 
-            'Laundry Supplies'
-          ] 
-        },
-        { 
-          category: 'Garden & Outdoor Living', 
-          subCategories: [
-            'Garden Tools', 
-            'Plants & Seeds', 
-            'Outdoor Furniture', 
-            'Barbecue & Grill Supplies'
-          ] 
-        }
-      ]
+    const productCategories = useSelector(state => state.productSlice.filterCategories)
 
     // dummy notification to handle notifications
     const notification = {
@@ -272,11 +143,27 @@ function Productscomp() {
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
                     >
-                        {productCategories.map((item) => (
-                            item.subCategories.map((subs,key) => (
-                                <option key={key} value={subs} className='font-DMSans'>{subs}</option>
-                            ))
+                        {Object.entries(productCategories.men).map(([category, items]) => (
+                                items.map((item,key) => (
+                                  <option key={key} value={item} className="font-DMSans">
+                                  {item}
+                                </option>
+                                ))
                         ))}
+                        {Object.entries(productCategories.women).map(([category, items]) => (
+                                      items.map((item,key) => (
+                                        <option key={key} value={item} className="font-DMSans">
+                                        {item}
+                                      </option>
+                                      ))
+                          ))}
+                          {Object.entries(productCategories.unisex).map(([category, items]) => (
+                                        items.map((item,key) => (
+                                          <option key={key} value={item} className="font-DMSans">
+                                          {item}
+                                        </option>
+                                        ))
+                            ))}
                     </select>
             </div>
             <div className='flex gap-2'>

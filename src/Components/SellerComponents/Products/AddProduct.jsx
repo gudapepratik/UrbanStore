@@ -229,7 +229,7 @@ function AddProduct({ CloseModal }) {
     // validate and handle image inputs
     const handleImageInput = (e) => {
       const files = Array.from(e.target.files)
-      console.log(files)
+      // console.log(files)
 
       if(files.length !== 4){
         alert('Upload exactly 4 images')
@@ -238,14 +238,14 @@ function AddProduct({ CloseModal }) {
       } else{
         setImageFile(files)
         const urls = files.map((file) => URL.createObjectURL(file))
-        console.log(urls)
+        // console.log(urls)
         setImagePreview(urls.map(url => {return url}))
       }
     }
 
   // function to handle data
   const handleProductData = (e, type) => {
-    console.log(e.target.value, type);
+    // console.log(e.target.value, type);
     setProductDetails((prev) => ({ ...prev, [type]: `${e.target.value}` }));
   };
 
@@ -300,7 +300,7 @@ function AddProduct({ CloseModal }) {
       setImageFile([])
       setCurrentFormStep(0)
     } catch(error){
-      console.log(error.message)
+      // console.log(error.message)
       Store.addNotification({
         ...notification,
         type: "danger",
@@ -554,15 +554,17 @@ function AddProduct({ CloseModal }) {
               <RiArrowLeftLine size={18} /> Previous
             </button>
 
-            {/* Next button  */}
+            
             {CurrentFormStep === 4 ?
             <button
-              className="font-DMSans gap-2 flex justify-center items-center bg-[#00B75F] font-bold text-sm text-white w-24 h-10 rounded-md"
+              className="font-DMSans gap-2 flex justify-center items-center bg-[#00B75F] opacity-70 font-bold text-sm text-white w-24 h-10 rounded-md"
               onClick={handleSubmit}
+              disabled // temporarily disabled
               >
                 Submit
             </button>
             :
+            
             <button
                 className="font-DMSans gap-2 flex justify-center items-center bg-[#00B75F] font-bold text-sm text-white w-24 h-10 rounded-md"
                 onClick={nextStep}

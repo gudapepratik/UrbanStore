@@ -67,7 +67,7 @@ function SellerOrders() {
     const fetchOrders = async () => {
         try{
             setIsLoading(true)
-            console.log(userData.$id)
+            // console.log(userData.$id)
             // get the orders from the orders collection
             const orderResponse = await sellerService.getOrders({sellerId: userData.$id, filterCategory: filterCategory})
 
@@ -97,7 +97,7 @@ function SellerOrders() {
             )
 
             setOrders(orderData)
-            console.log(orderData)
+            // console.log(orderData)
             
         } catch(error){
             triggerNotification({

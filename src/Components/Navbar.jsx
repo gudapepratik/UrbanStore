@@ -67,7 +67,7 @@ function Navbar() {
       })
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       Store.addNotification({
         ...notification,
         type: "danger",

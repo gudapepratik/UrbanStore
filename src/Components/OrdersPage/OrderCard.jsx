@@ -30,20 +30,24 @@ function OrderCard({
   // loading state for fetch product
   const [isloading,setIsLoading] = useState(false)
 
+  // state to slice the product title for different screen sizes
+  const [SliceLength,setSliceLength] = useState(20);
+
   // handle cancel order is a method to invoke the function in Orders component to cancel the order
   const handleCancelOrder =async () => {
     try {
       cancelOrderHandler(currentOrder?.State,currentOrder?.$id)
     } catch(error) {
       // notficationHandler(error.message)
-      console.log(error.message)
+      // console.log(error.message)
     }
   }
 
   // useeffect hook to invoke the fetchProduct method whenever the currentOrder changes
   useEffect(() => {
     fetchProduct()
-    console.log("run ")
+    handleSliceUpdate()
+    // console.log("run ")
   },[currentOrder])
 
   // method to get the product details (from products collection) and preview image url (from storage bucket)  for the currentOrder using the product id
@@ -71,6 +75,14 @@ function OrderCard({
     setIsLoading(false)
   }
 
+  // method to handle product title slice length
+  const handleSliceUpdate = () => {
+    if (window.innerWidth >= 768) {
+      setSliceLength(50); // Medium screens and above
+    } else {
+      setSliceLength(20); // Small screens
+    }
+  }
   // method to split the product.name into brandName and product title
   const splitName = (name) => {
     const splitted = name.split('|')
@@ -118,8 +130,8 @@ function OrderCard({
                 </div>
 
                 <div className='flex w-full justify-between'>
-                  <h3 className='w-fit text-[12px] md:text-[14px] whitespace-nowrap text-fade -z-20'>{splittedName.at(1)?.slice(0,33)}..</h3>
-                  <h4 className='text-[12px] md:text-sm  text-zinc-600'>expected delivery: <span className='font-medium text-zinc-800 text-[12px] md:text-sm'>{expectedtransformedDate}</span></h4>
+                  <h3 className='w-fit text-[12px] md:text-[14px] whitespace-nowrap text-fade -z-20'>{splittedName.at(1)?.slice(0,SliceLength)}..</h3>
+                  <h4 className='text-[12px] md:text-sm  text-zinc-600'>delivery by: <span className='font-medium text-zinc-800 text-[12px] md:text-sm text-right'>{expectedtransformedDate}</span></h4>
                 </div>
               </div>
 
@@ -132,7 +144,7 @@ function OrderCard({
               {/* placed on and paymnet method  */}
               <div className='flex w-full justify-between'>
                   <h4 className='text-[12px] md:text-sm   text-zinc-600'>Quantity: <span className='font-medium text-zinc-800  text-[12px] md:text-base'>{currentOrder?.quantity}</span></h4>
-                  <h4 className='text-[12px] md:text-sm   text-zinc-600'>payment method: <span className='font-medium text-zinc-800 text-[12px] md:text-sm '>{currentOrder?.paymentMethod}</span></h4>
+                  <h4 className='text-[12px] md:text-sm   text-zinc-600'>payment: <span className='font-medium text-zinc-800 text-[12px] md:text-sm '>{currentOrder?.paymentMethod}</span></h4>
               </div>
 
               {/* orderStatus and cancel order button  */}

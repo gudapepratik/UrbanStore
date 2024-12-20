@@ -30,7 +30,9 @@ const addMemberToTeam = async ({userId,userName,userEmail}) => {
         )
         return response
     } catch(error){
-        console.log("Error addMemberToTeam: ",error)
+        // console.log("Error addMemberToTeam: ",error)
+        throw new Error(error.message);
+        
     }
 }
 

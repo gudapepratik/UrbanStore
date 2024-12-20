@@ -14,7 +14,7 @@ function Searchbar() {
     const handleSearch = async (e) => {
         e.target.preventDefault
         try {
-          console.log(tosearch)
+          // console.log(tosearch)
           // dispatch(setLoading(true))
           // const response = await service.searchProductsbyname(key)
           // console.log(response)
@@ -29,7 +29,7 @@ function Searchbar() {
 
 
         } catch(error){
-          console.log(error)
+          // console.log(error)
         }
     }
 

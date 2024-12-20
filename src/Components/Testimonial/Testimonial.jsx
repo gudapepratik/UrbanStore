@@ -34,7 +34,7 @@ function Testimonial({notificationTrigger}) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(e)
+        // console.log(e)
         if(email !== '') {
             notificationTrigger({
                 type: 'success',
@@ -65,7 +65,7 @@ function Testimonial({notificationTrigger}) {
                         </div>
 
                         <div className='flex gap-2 '>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} className='flex gap-2'>
                             <input
                                 type="email"
                                 name="email"

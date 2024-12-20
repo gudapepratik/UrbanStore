@@ -52,16 +52,16 @@ function CreateAcc() {
   } = useForm();
 
   const Onsubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       let userData = await authService.createAccount(data);
-      console.log(userData);
+      // console.log(userData);
       if (userData) {
         dispatch(login(userData));
         // navigate('/')
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 

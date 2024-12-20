@@ -4,9 +4,10 @@ import addMemberToTeam from "./serviceacc";
 
 // read --> https://appwrite.io/docs/references/cloud/client-web/account
 // this is a different approach
-// yaha AuthService ek class hai , so isme we have all the functions yahi ek new client ban raha hai , nahito woh login kar rha hai
-// , etc . then we have authservice ek object hai, jisko ham kahibhi import karke authservice.fun_name aise easily use kar sakte hai
-// so we are exporting authservice only not AuthService class; read docs for services functions from appwrite
+// AuthService is a class that contains all the functions for authentication (like creating a new client, logging in, etc.).
+// We are not directly using the AuthService class; instead, we create an object from it called authService.
+// By exporting only the authService object, we can easily use it anywhere in the project by importing it and calling its functions like authService.functionName().
+// If you need to know more about the functions this service provides, refer to the Appwrite documentation.
 export class AuthService {
     client = new Client();
     account ;

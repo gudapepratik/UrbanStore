@@ -40,14 +40,12 @@ function Login() {
   } = useForm();
 
   const Onsubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       setIsLoading(true)
       if(isnoaccount){
-        // console.log("yaha aagya")
         var user = await authService.createAccount(data);
       } else{
-        // console.log("sahi hai")
         user = await authService.login(data,"Customer");
       }
       //console.log(userData);

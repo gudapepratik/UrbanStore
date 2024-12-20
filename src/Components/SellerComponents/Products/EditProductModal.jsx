@@ -59,7 +59,7 @@ function EditProductModal({productDetails,closeProductModal}) {
                 return url.href
             })
         )
-        console.log(urls)
+        // console.log(urls)
 
         setPreviewImgUrls(urls)
     }
@@ -98,7 +98,7 @@ function EditProductModal({productDetails,closeProductModal}) {
             // set loading state
             setIsLoading(true)
 
-            console.log(product)
+            // console.log(product)
             const mergedName = mergeName(product.brandname,product.productname)
 
             if(product.brandname === splittedName.at(0) && product.productname === splittedName.at(1) && product.description === productDetails.description && Number(product.price) === productDetails.price && Number(product.stock) === productDetails.stock){
@@ -110,7 +110,7 @@ function EditProductModal({productDetails,closeProductModal}) {
             }
 
             const updatedProductData = {...product,'name': mergedName}
-            console.log(updatedProductData)
+            // console.log(updatedProductData)
             // update the details
             await sellerService.updateProduct({productId: productDetails.$id,updateData: updatedProductData})
 
@@ -300,14 +300,15 @@ function EditProductModal({productDetails,closeProductModal}) {
                     </div>
                     <div className='w-full flex gap-1'>
                         <button 
-                            className='p-3 bg-orange-500 hover:bg-orange-600 transition-all font-DMSans text-white'
+                            className='p-3 bg-orange-400 transition-all font-DMSans text-white'
                             onClick={handleProductUpdate}
+                            disabled // temporarily disabled
                         >Update Details</button>
 
                         <button 
                             className='p-3 bg-red-400 transition-all font-DMSans text-white'
                             onClick={handleRemoveProduct}
-                            disabled
+                            disabled // temporarily disabled
                         >Remove Product</button>
 
                     </div>

@@ -37,7 +37,7 @@ function Layout({children}) {
           await authService.logOut();
           dispatch(logout());
         } catch (error) {
-          console.log(error);
+          // console.log(error);
         } finally {
           localStorage.removeItem("reloaded"); // clear the flag (equals to 0)
         }

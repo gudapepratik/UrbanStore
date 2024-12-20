@@ -85,55 +85,6 @@ function Cart() {
     })
   }, [location])
 
-  // const fetchProducts = async () => {
-  //     try {
-  //       SetIsFetchDone(false)
-  //       // const promises = productids.map(async (id) => {
-  //       //   const data = await service.getSingleProduct(id);
-  //       //   console.log(data)
-  //       //   dispatch(addToCart({
-  //       //     productid: data.$id,
-  //       //     name: data.name,
-  //       //     price: data.price,
-  //       //     quantity: 1 // or whatever the default quantity should be
-  //       // }));
-  //       // });
-
-  //       const cartdata = await Promise.all(
-  //         productids.map(async (productid) => {
-  //           return await service.getSingleProduct(productid)
-  //         })
-  //       ); // Wait for all product fetches to complete.
-  //       console.log(cartdata)
-  //       SetIsFetchDone(true)
-  //     } catch (error) {
-  //       console.error('Error fetching product:', error);
-  //     }
-  //   };
-
-  //   const getItems = async () => {
-  //     try {
-  //       setGetProductids(false)
-  //       const data = await service.getCartItems(userid);
-  //       if (data) {
-  //         const productIdsArray = data.documents.map((document) => document.productid);
-  //         setProductIds(productIdsArray);
-  //         setGetProductids(true)
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching cart items:', error);
-  //     }
-  //   };
-
-  // useEffect(() => {
-  //     if (userid) {
-  //       getItems();
-  //       if(getproductids){
-  //         fetchProducts();
-  //       }
-  //     }
-  // }, [userid]);
-
   // testing feature
   // state to toggle the buy item component
   
@@ -172,7 +123,7 @@ function Cart() {
     //   console.log(cartItems);
       SetIsFetchDone(true);
     } catch (error) {
-      console.error("Error fetching product:", error);
+      // console.error("Error fetching product:", error);
       SetIsFetchDone(false);
     } 
   };
@@ -213,7 +164,13 @@ function Cart() {
         setGetProductids(true);
       }
     } catch (error) { 
-      console.error("Error fetching cart items:", error);
+      // console.error("Error fetching cart items:", error);
+      triggerNotification({
+        type: "danger",
+        title: "Error occured while fetching items",
+        message: `${error.message}`
+      })
+      
     }
   };
 
@@ -234,14 +191,6 @@ function Cart() {
     try{
 
       setToShowBuyComp(true)
-      // check if user not logged in
-      // if(!userstatus) {
-      //   // disable the button if the user is not logged in
-      //   e.target.disabled = true; 
-      //   throw new Error("User not logged in");
-      // }
-
-      // setToShowBuyComp(true)
       
 
     } catch(error) {

@@ -5,9 +5,6 @@ function SellerHome() {
     const userData = useSelector(state => state.authSlice?.userData)
     const userStatus = useSelector(state => state.authSlice?.status)
 
-    useState(() => {
-        console.log(userData)
-    })
 
     return (
         <>

@@ -19,12 +19,12 @@ export class Service{
 
     // method to get all the products in database collection - products to show them on screen
     async getProducts({limit,onpage,categories}) {
-        console.log(limit,onpage)
+        // console.log(limit,onpage)
         // const categoryArray = [category]
-        console.log(categories)
+        // console.log(categories)
         try {
             if(categories && categories.at(0) !== 'All Products'){
-                console.log(categories)
+                // console.log(categories)
                 return await this.databases.listDocuments(
                     conf.appwriteDatabaseID, // param1 - database id
                     conf.appwriteproductsId, // param2 - collection id - products
@@ -47,7 +47,7 @@ export class Service{
                     )
             }
         } catch (error) {
-            console.log(`Apprite service :: getProducts ${error}`)
+            // console.log(`Apprite service :: getProducts ${error}`)
             return [] // return an empty array 
         }
     }
@@ -105,7 +105,9 @@ export class Service{
             }
 
         } catch(error) {
-            console.log(`Apprite service :: addItemToCart ${error}`)
+            // console.log(`Apprite service :: addItemToCart ${error}`)
+            throw new Error(error.message);
+            
         }
     }
 
@@ -137,7 +139,7 @@ export class Service{
                 [Query.equal("user_id",userid)], // param3 - queries array --> userid match with current user's id
             )
         } catch(error) {
-            console.log(`Apprite service :: getCartItems ${error}`)
+            // console.log(`Apprite service :: getCartItems ${error}`)
             return false;
         }
     }
@@ -249,7 +251,9 @@ export class Service{
             )
 
         } catch(error){
-            console.log(`Error : getImageUrl ${error}`)
+            // console.log(`Error : getImageUrl ${error}`)
+            throw new Error(error.message);
+            
         }
     }
 
@@ -262,14 +266,14 @@ export class Service{
                 [Query.contains('description',key), Query.contains('name',key),Query.contains('category',key)]
             )
         } catch(error){
-            console.log(error)
+            // console.log(error)
         }
     }
 }
 
 
-// Service ka object banado and use export karo so that hame ek object milega and usepe ham . method se 
-// konse bhi functions access kar sakte hai
+// Create an object of the Service class and export it.
+// This way, we get a single object that we can use to access any function by calling it with a dot, like objectName.methodName().
 const service = new Service();
 export default service
 

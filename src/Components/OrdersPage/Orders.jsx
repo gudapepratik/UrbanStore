@@ -92,7 +92,7 @@ function Orders() {
     // set loading state
     setIsLoading(true)
     try{
-      console.log(filterCategory)
+      // console.log(filterCategory)
       const ordersResponse = await service.getAllOrders({
         limit: 8,
         onpage: onpage,
@@ -100,7 +100,7 @@ function Orders() {
         filterCategory: filterCategory
       })
 
-      console.log(ordersResponse.documents)
+      // console.log(ordersResponse.documents)
       setOrders(ordersResponse.documents )
     } catch(error) {
       // trigger error notification

@@ -68,7 +68,7 @@ function Product({
         try {
            fetchProduct()
         } catch(error) {
-            console.log(error.message)
+            // console.log(error.message)
         }
     },[productId])
 
