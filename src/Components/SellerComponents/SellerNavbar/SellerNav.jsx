@@ -9,6 +9,8 @@ import { ReactNotifications, Store } from 'react-notifications-component' // rea
 import 'react-notifications-component/dist/theme.css' // react notification css theme
 import 'animate.css/animate.min.css' // react notification animation class
 import { NavLink } from 'react-router-dom'
+import { triggerNotification } from '../../../utils/triggerNotification.utils'
+import AuthService from '../../../api/services/auth.services.js'
 
 
 // color - #00B75F
@@ -29,38 +31,11 @@ function SellerNav() {
     // navigate to navigate through pages
     const navigate = useNavigate()
 
-    
-    // notification triggerer helper function
-    const triggerNotification = ({type, title, message}) => {
-        // dummy Notification 
-        const notification = {
-            title: "Add title message",
-            message: "Configurable",
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-            animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
-        };
-
-        Store.addNotification({
-        ...notification,
-        type: type,
-        title: title,
-        message: message,
-        container: 'top-right',
-        dismiss: {
-            duration: 2000,
-            pauseOnHover: true,
-        }
-        });
-    };
-    
-
     const LogoutSeller = async () => {
         try {
             setIsLoading(true)
-            await authService.logOut()
+            console.log('saf')
+            await AuthService.logoutUser()
             .then(() => {
                 dispatch(logout())
                 navigate('/sellerdashboard/login')
@@ -69,6 +44,8 @@ function SellerNav() {
             triggerNotification({type: "info", title: "Logged out successfully", message: "You've successfully logged out of your account"})
         } catch(error){
             triggerNotification({type: "danger", title: "Unknown Error Occurred", message: `Logout Failed: ${error.message}`})
+        } finally{
+            setIsLoading(false)
         }
     }
 

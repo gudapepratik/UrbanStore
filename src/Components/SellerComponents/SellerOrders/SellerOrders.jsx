@@ -5,6 +5,7 @@ import sellerService  from '../../../appwrite/sellerconfig'
 import EditOrderModal from './EditOrderModal'
 import Loader from '../../Loader/Loader'
 import { RiRefreshLine } from '@remixicon/react'
+import ordersServices from '../../../api/services/orders.services'
 
 function SellerOrders() {
     
@@ -69,32 +70,33 @@ function SellerOrders() {
             setIsLoading(true)
             // console.log(userData.$id)
             // get the orders from the orders collection
-            const orderResponse = await sellerService.getOrders({sellerId: userData.$id, filterCategory: filterCategory})
+            const orderResponse = await ordersServices.getOrderItems({page: 2, limit: 10})
+            console.log(orderResponse)
 
             // get the product details from products collection
-            const orderData = await Promise.all(
-                orderResponse.documents.map(async (order) => {
-                    const product =  await sellerService.getSingleProduct(order.product_id)
-                    const previewImgUrl = await sellerService.getImageUrl(product.image.at(0))
-                    return {
-                        'order_id': order.$id,
-                        'product_id': order.product_id,
-                        'customer_id': order.customer_id,
-                        'State': order.State,
-                        'price': order.price,
-                        'product_category': product.category,
-                        'previewImgUrl': previewImgUrl.href,
-                        'product_name':product.name,
-                        'product_stock': product.stock,
-                        'quantity_ordered': order.quantity,
-                        'address': order.address,
-                        'paymentMethod': order.paymentMethod,
-                        'order_datetime': order.$createdAt,
-                        'expected_delivery_date': order.expected_delivery_date,
-                        'last_updated_on': order.$updatedAt,
-                    }
-                })
-            )
+            // const orderData = await Promise.all(
+            //     orderResponse.documents.map(async (order) => {
+            //         const product =  await sellerService.getSingleProduct(order.product_id)
+            //         const previewImgUrl = await sellerService.getImageUrl(product.image.at(0))
+            //         return {
+            //             'order_id': order.$id,
+            //             'product_id': order.product_id,
+            //             'customer_id': order.customer_id,
+            //             'State': order.State,
+            //             'price': order.price,
+            //             'product_category': product.category,
+            //             'previewImgUrl': previewImgUrl.href,
+            //             'product_name':product.name,
+            //             'product_stock': product.stock,
+            //             'quantity_ordered': order.quantity,
+            //             'address': order.address,
+            //             'paymentMethod': order.paymentMethod,
+            //             'order_datetime': order.$createdAt,
+            //             'expected_delivery_date': order.expected_delivery_date,
+            //             'last_updated_on': order.$updatedAt,
+            //         }
+            //     })
+            // )
 
             setOrders(orderData)
             // console.log(orderData)

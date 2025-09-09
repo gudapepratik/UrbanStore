@@ -12,7 +12,6 @@ export class AuthService {
     client = new Client();
     account ;
 
-
     constructor() {
         this.client
             .setEndpoint(config.appwriteUrl)

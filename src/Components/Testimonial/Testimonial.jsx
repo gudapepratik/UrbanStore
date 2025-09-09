@@ -1,34 +1,9 @@
 import React, { useState } from 'react'
 import { ReactNotifications, Store } from 'react-notifications-component'
 import { NavLink } from 'react-router-dom'
+import { triggerNotification } from '../../utils/triggerNotification.utils'
 
-function Testimonial({notificationTrigger}) {
-
-    // notification triggerer helper function
-    const triggerNotification = ({type, title, message}) => {
-        // dummy notification to handle notifications
-        const notification = {
-            title: "Add title message",
-            message: "Configurable",
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-            animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
-        };
-        
-        Store.addNotification({
-            ...notification,
-            type: type,
-            title: title,
-            message: message,
-            container: 'top-right',
-            dismiss: {
-                duration: 2000,
-                pauseOnHover: true,
-            }
-        });
-    };
+function Testimonial() {
 
     const [email,setEmail] = useState('')
 
@@ -36,13 +11,13 @@ function Testimonial({notificationTrigger}) {
         e.preventDefault()
         // console.log(e)
         if(email !== '') {
-            notificationTrigger({
+            triggerNotification({
                 type: 'success',
                 title: 'Subscription Successful',
                 message: `Thank you for subscribing to our newsletter! We're thrilled to have you on board`
             })
         } else{
-            notificationTrigger({
+            triggerNotification({
                 type: 'info',
                 title: 'Email Required',
                 message: `Please enter a valid email address to subscribe to our newsletter and enjoy the benefits!`

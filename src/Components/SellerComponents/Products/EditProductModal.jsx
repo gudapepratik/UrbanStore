@@ -4,83 +4,33 @@ import Loader from '../../Loader/Loader'
 import { RiCloseCircleLine } from '@remixicon/react'
 import sellerService from '../../../appwrite/sellerconfig'
 import { setLoading } from '../../../store/productSlice'
+import ProductService from '../../../api/services/products.services'
+import { triggerNotification } from '../../../utils/triggerNotification.utils'
 
 function EditProductModal({productDetails,closeProductModal}) {
     
     // loading state
     const [isloading,setIsLoading] = useState(false)
-    
-    // notification triggerer helper function
-    const triggerNotification = ({type, title, message}) => {
-          // dummy notification to handle notifications
-        const notification = {
-            title: "Add title message",
-            message: "Configurable",
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-            animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
-        };
-        
-        Store.addNotification({
-            ...notification,
-            type: type,
-            title: title,
-            message: message,
-            container: 'top-right',
-            dismiss: {
-                duration: 2000,
-                pauseOnHover: true,
-        }
-        });
-    };
-
-    // img preview state
-    const [previewImgUrls,setPreviewImgUrls] = useState([])
-
-    // splitted name state
-    const [splittedName,setSplittedName] = useState([])
 
     // product details update state
     const [product,setProduct] = useState({
-        brandname: "",
-        productname: "",
+        brand: "",
+        name: "",
         description: "",
         price: null,
         stock: null
     })
 
-    // get image urls
-    const getPreviewImgUrls =  async () => {
-        const urls = await Promise.all(
-            productDetails.image.map(async (fileId) => {
-                const url = await sellerService.getImageUrl(fileId)
-                return url.href
-            })
-        )
-        // console.log(urls)
-
-        setPreviewImgUrls(urls)
-    }
-
     useEffect(() => {
-        // Split the name
-        const splitted = productDetails.name.split("|");
-        setSplittedName(splitted)
-        
         // set the initial data into product state
         setProduct((prevState) => ({
             ...prevState,
-            brandname: splitted.at(0) || "",
-            productname: splitted.at(1) || "",
+            brand: productDetails.brand || "",
+            name: productDetails.name || "",
             description: productDetails.description || "",
             price: productDetails.price ?? null,
             stock: productDetails.stock ?? null,
         }));
-        
-        //call the method Get image URLs
-        getPreviewImgUrls();
     },[productDetails])
 
     // handle product data to be updated
@@ -98,32 +48,35 @@ function EditProductModal({productDetails,closeProductModal}) {
             // set loading state
             setIsLoading(true)
 
-            // console.log(product)
-            const mergedName = mergeName(product.brandname,product.productname)
-
-            if(product.brandname === splittedName.at(0) && product.productname === splittedName.at(1) && product.description === productDetails.description && Number(product.price) === productDetails.price && Number(product.stock) === productDetails.stock){
+            if(product.brand === productDetails.brand && product.name === productDetails.name && product.description === productDetails.description && Number(product.price) === productDetails.price && Number(product.stock) === productDetails.stock){
                 throw new Error("Product details not updated. Please update some fields to reflect changes")
             }
 
-            if(product.brandname === "" || product.productname === "" || product.description === "" || Number(product.price) <= 0 || Number(product.stock) <= 0){
+            if(product.brand === "" || product.name === "" || product.description === "" || Number(product.price) <= 0 || Number(product.stock) <= 0){
                 throw new Error("Product details missing or invalid. Please ensure all the details are filled correctly")
             }
+            console.log(productDetails)
 
-            const updatedProductData = {...product,'name': mergedName}
-            // console.log(updatedProductData)
             // update the details
-            await sellerService.updateProduct({productId: productDetails.$id,updateData: updatedProductData})
+            await ProductService.updateProductDetails({
+                productId: productDetails._id,
+                name: product.name,
+                brand: product.brand,
+                stock: product.stock,
+                price: product.price,
+                description: product.description
+            })
 
             triggerNotification({
                 type: "success",
                 title: "Details updated",
-                message: `Your changes to the product with ID ${productDetails.$id} details have been successfully saved and are now live.`
+                message: `Your changes to the product with ID ${productDetails._id} details have been successfully saved and are now live.`
             })
 
         } catch(error){
             triggerNotification({
                 type: 'danger',
-                title: 'Error Occurred',
+                title: 'Product Update failed!!',
                 message: `${error.message}`
             })
         } finally{
@@ -139,7 +92,7 @@ function EditProductModal({productDetails,closeProductModal}) {
             setLoading(true)
 
             // method to delete the document from products collection
-            await sellerService.deleteProduct({documentid: productDetails.$id, imageIds: productDetails.image})
+            await ProductService.deleteProductById(productDetails._id)
 
             triggerNotification({
                 type: "success",
@@ -150,17 +103,12 @@ function EditProductModal({productDetails,closeProductModal}) {
         } catch(error){
             triggerNotification({
                 type: 'danger',
-                title: 'Error Occurred',
+                title: 'Product delete failed !!!',
                 message: `${error.message}`
             })
         } finally{
             setIsLoading(false)
         }
-    }
-
-    const mergeName = (brandname,productname) => {
-        const mergedName = brandname.concat(" | ",productname)
-        return String(mergedName)
     }
 
     return (
@@ -179,7 +127,7 @@ function EditProductModal({productDetails,closeProductModal}) {
                             <div className="flex gap-2 items-center">
                                 <label className="font-light text-xs">Last updated on:</label>
                                 <p className="text-sm font-medium">
-                                    {new Date(productDetails.$updatedAt).toLocaleString("en-GB", {
+                                    {new Date(productDetails.updatedAt).toLocaleString("en-GB", {
                                             day: "2-digit",
                                             month: "short",
                                             year: "numeric",
@@ -205,15 +153,14 @@ function EditProductModal({productDetails,closeProductModal}) {
                             <div className="flex w-full flex-col gap-2">
                                 <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
                                     <label className="text-zinc-700">Product ID</label>
-                                    <h3 className="text-sm w-2/3 text-left">{productDetails.$id}</h3>
+                                    <h3 className="text-sm w-2/3 text-left">{productDetails._id}</h3>
                                 </div>
                                 <div className="w-full flex items-start justify-between py-2">
                                     <label className="text-zinc-700">Product images</label>
                                     <div className='w-2/3 flex flex-wrap gap-1 items-center'>
                                             {
-                                                previewImgUrls.map((url,key) => (
-                                                    <img key={key} src={url} alt="previewImg" className="md:w-32 md:h-40 w-12 h-20 object-center rounded"/>
-                                                    // <input type="file" key={key} name={`image${key}`} className='md:w-20 md:h-28 w-12 h-20  object-center rounded'/>
+                                                productDetails.imageUrls.map((image,key) => (
+                                                    <img key={key} src={image.publicUrl} alt="previewImg" className="md:w-32 md:h-40 w-12 h-20 object-center rounded"/>
                                                 ))
                                             }
                                     </div>
@@ -225,26 +172,26 @@ function EditProductModal({productDetails,closeProductModal}) {
                                     <label className="text-zinc-700">Brand Name</label>
                                     <input 
                                         type="text" 
-                                        name="brandName" 
+                                        name="brand" 
                                         className="text-sm w-2/3 font-medium text-left border-b-[1px] border-zinc-500 px-2 focus:outline-none outline-none focus:bg-zinc-200 rounded-md pt-2 text-nowrap" 
-                                        defaultValue={product.brandname}
-                                        onChange={(e) => handleProductDataInput(e,'brandname')}
+                                        defaultValue={product.brand}
+                                        onChange={(e) => handleProductDataInput(e,'brand')}
                                     ></input>
                                 </div>
                                 <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
                                     <label className="text-zinc-700">Product Name</label>
                                     <input type="text" 
-                                        name="productName" 
+                                        name="name" 
                                         className="text-sm w-2/3 font-medium text-left border-b-[1px] border-zinc-500 px-2 focus:outline-none outline-none focus:bg-zinc-200 rounded-md pt-2 text-nowrap" 
-                                        defaultValue={product.productname}
-                                        onChange={(e) => handleProductDataInput(e,'productname')}
+                                        defaultValue={product.name}
+                                        onChange={(e) => handleProductDataInput(e,'name')}
                                     ></input>
                                 </div>
 
                                 <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
                                     <label className="text-zinc-700">Added On</label>
                                     <h3 className="text-sm w-2/3 text-left">
-                                        {new Date(productDetails.$createdAt).toLocaleString("en-GB", {
+                                        {new Date(productDetails.createdAt).toLocaleString("en-GB", {
                                                 day: "2-digit",
                                                 month: "short",
                                                 year: "numeric",
@@ -300,15 +247,15 @@ function EditProductModal({productDetails,closeProductModal}) {
                     </div>
                     <div className='w-full flex gap-1'>
                         <button 
-                            className='p-3 bg-orange-400 transition-all font-DMSans text-white'
+                            className='p-3 bg-orange-500 transition-all hover:bg-orange-600 font-DMSans text-white'
                             onClick={handleProductUpdate}
-                            disabled // temporarily disabled
+                            // disabled // temporarily disabled
                         >Update Details</button>
 
                         <button 
-                            className='p-3 bg-red-400 transition-all font-DMSans text-white'
+                            className='p-3 bg-red-500 transition-all hover:bg-red-600 font-DMSans text-white'
                             onClick={handleRemoveProduct}
-                            disabled // temporarily disabled
+                            // disabled // temporarily disabled
                         >Remove Product</button>
 
                     </div>

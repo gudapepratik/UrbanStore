@@ -9,6 +9,9 @@ const conf = {
     appwriteproductimageBucketId: String(import.meta.env.VITE_APP_PRODUCT_IMAGE_BUCKET_ID),
     appwritesellerTeamId:  String(import.meta.env.VITE_APP_APPWRITE_SELLER_TEAM_ID),
     appwritesellerTeamManagerApiKey:  String(import.meta.env.VITE_APP_APPWRITE_SELLER_TEAM_MANAGER_API_KEY),
+    // new part
+    backendApiBaseUrl: String(import.meta.env.VITE_APP_API_BASE_URL),
+    razorpayKeyId: String(import.meta.env.VITE_APP_RAZORPAY_KEY_ID)
 }
 
 export default conf

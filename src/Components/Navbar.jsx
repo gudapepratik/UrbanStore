@@ -22,6 +22,7 @@ import { ReactNotifications, Store } from 'react-notifications-component' // rea
 import 'react-notifications-component/dist/theme.css' // react notification css theme
 import 'animate.css/animate.min.css' // react notification animation class
 import { setFilter } from "../store/productSlice";
+import AuthService  from "../api/services/auth.services";
 
 
 function Navbar() {
@@ -49,7 +50,8 @@ function Navbar() {
     try {
       if (userdata) {
         setIsLoading(true);
-        await authService.logOut().then(() => {
+        console.log(userdata, userStatus)
+        await AuthService.logoutUser().then(() => {
           dispatch(logout());
           dispatch(clearCart());
         });
@@ -107,7 +109,7 @@ function Navbar() {
       </div>
 
       {/* Search Bar */}
-      <Searchbar/>
+      {/* <Searchbar/> */}
 
       {/* Nav Items */}
       <ul className="gap-10 hidden lg:flex items-center font-pathwayExtreme">

@@ -16,6 +16,8 @@ export default {
         pathwayExtreme: ['Pathway Extreme'],
         ProtestStrike: ['Protest Strike'],
         SpicyRice: ['Spicy Rice'],
+        outfit: ['outfit', 'open-sans'],
+        powerGrotesk: ['Power Grotesk']
                // Add more custom font families as needed
       },
       spacing: {

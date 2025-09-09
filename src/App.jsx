@@ -8,7 +8,7 @@ import Home from "./Components/Home";
 function App() {
   return (
     <>
-      <div className="flex flex-col w-full h-screen">
+      <div className="flex flex-col  w-full h-screen">
         {/* <Navbar/> */}
         {/* <Login/> */}
         {/* <CreateAcc/> */}

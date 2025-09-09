@@ -14,6 +14,7 @@ import 'swiper/css/pagination';
 import { useNavigate } from 'react-router'
 import { setFilter } from '../store/productSlice.js'
 import { ReactNotifications, Store } from 'react-notifications-component'
+import { triggerNotification } from '../utils/triggerNotification.utils.js'
 
 function Home() {
   const user = useSelector(state => state.authSlice.userData)
@@ -28,31 +29,7 @@ function Home() {
 
   const filterCategory = useSelector(state => state.productSlice.filterCategories)
 
-  // notification triggerer helper function
-  const triggerNotification = ({type, title, message}) => {
-    // dummy notification to handle notifications
-    const notification = {
-        title: "Add title message",
-        message: "Configurable",
-        type: "success",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-        animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
-    };
-    
-    Store.addNotification({
-        ...notification,
-        type: type,
-        title: title,
-        message: message,
-        container: 'top-right',
-        dismiss: {
-            duration: 2000,
-            pauseOnHover: true,
-        }
-    });
-  };
+  
 
   useEffect(() => {
     // use window.scrollTo() method to scroll to top smoothly whenever user clicks on next or prev buttons
@@ -271,7 +248,7 @@ function Home() {
             </div> */}
 
             {/* Testimonial page  */}
-            <Testimonial notificationTrigger={triggerNotification}/>
+            <Testimonial/>
         {/* footer render */}
           <Footer/>
         </div>

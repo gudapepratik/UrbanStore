@@ -12,6 +12,7 @@ import 'react-notifications-component/dist/theme.css' // react notification css 
 import 'animate.css/animate.min.css' // react notification animation class
 import Checkout from "../Checkout/Checkout";
 import Loader from "../Loader/Loader";
+import AmountTable from "./AmountTable";
 
 function Cart() {
   const dispatch = useDispatch();
@@ -231,40 +232,7 @@ function Cart() {
             </div>
 
             {/* checkout section  */}
-            <div className="w-full md:w-2/6 md:mx-10 mt-4 px-6 flex flex-col gap-3 h-full">
-              <h1 className="font-DMSans font-bold text-2xl">Order Summary</h1>
-              <div className="shadow-inner">
-                <div className="w-full border-[1px] border-b-0 flex flex-col border-zinc-400 ">
-                  {/* subtotal  */}
-                  <div className="flex items-center justify-between p-3 border-b-[1px] border-zinc-400">
-                    <h2 className="font-DMSans font-semibold text-base">
-                      Items Subtotal
-                    </h2>
-                    <h3 className="font-DMSans text-md text-zinc-500">₹{totalcost}</h3>
-                  </div>
-                  {/* Tax  */}
-                  <div className="flex items-center justify-between p-3 border-b-[1px] border-zinc-400">
-                    <h2 className="font-DMSans font-semibold text-base">Tax</h2>
-                    <h3 className="font-DMSans text-md text-zinc-500">-</h3>
-                  </div>
-
-                  {/* total  */}
-                  <div className="flex items-center justify-between p-3 ">
-                    <h2 className="font-DMSans font-semibold text-base">
-                      Total
-                    </h2>
-                    <h3 className="font-DMSans text-md font-bold text-zinc-500">
-                    ₹{(totalcost).toFixed(2)}
-                    </h3>
-                  </div>
-
-                  {/* place order button  */}
-                </div>
-                <button onClick={(e) => handleClickBuybutton(e)} className="bg-zinc-950 w-full font-DMSans font-bold text-white py-3 ">
-                  Place Order
-                </button>
-              </div>
-            </div>
+            <AmountTable/>
           </div>
         </div>
         </div>
@@ -277,7 +245,6 @@ function Cart() {
                 <h1 className='font-DMSans font-bold text-xl md:text-3xl text-rose-500'>User not Logged in</h1>
                 <h1 className='font-DMSans text-sm md:text-lg text-zinc-400'>Log in to your account to unlock your order history, track your packages</h1>
               </div>
-
             </div>
         :
 

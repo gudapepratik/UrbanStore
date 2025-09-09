@@ -1,17 +1,19 @@
+// 'use Strict'
 // Add product is a modal component
 // Modal components :- A modal is a user interface element, usually a dialog box or popup, that appears on top of the main content, requiring users to interact with it before they can return to the main interface.
 
 import {
   RiArrowLeftLine,
   RiArrowRightLine,
+  RiCheckboxBlankLine,
   RiCloseCircleLine,
   RiCrossLine,
 } from "@remixicon/react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import sellerService  from "../../../appwrite/sellerconfig";
-import authService from "../../../appwrite/auth";
-import { setLoading } from "../../../store/productSlice";
+// import sellerService  from "../../../appwrite/sellerconfig";
+// import authService from "../../../appwrite/auth";
+// import { setLoading } from "../../../store/productSlice";
 import Loader from "../../Loader/Loader";
 // import this in the components 
 import { ReactNotifications, Store } from 'react-notifications-component' // react notification component and Store to trigger the notifications
@@ -22,163 +24,34 @@ import 'animate.css/animate.min.css' // react notification animation class
 import { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import ProductService from "../../../api/services/products.services";
+import { triggerNotification } from "../../../utils/triggerNotification.utils";
+import SizeSelection from "./SizeSelection";
 
 function AddProduct({ CloseModal }) {
-  // product categories
-  // const productCategories = [
-  //   {
-  //     category: "Apparel & Accessories",
-  //     subCategories: [
-  //       "Men’s Clothing",
-  //       "Women’s Clothing",
-  //       "Kids' Clothing",
-  //       "Footwear",
-  //       "Bags & Luggage",
-  //       "Jewelry & Accessories",
-  //     ],
-  //   },
-  //   {
-  //     category: "Electronics",
-  //     subCategories: [
-  //       "Mobile Phones & Tablets",
-  //       "Computers & Laptops",
-  //       "Cameras & Photography",
-  //       "Audio & Headphones",
-  //       "Wearable Tech",
-  //       "Home Appliances",
-  //     ],
-  //   },
-  //   {
-  //     category: "Home & Living",
-  //     subCategories: [
-  //       "Furniture",
-  //       "Kitchenware",
-  //       "Bedding & Mattresses",
-  //       "Home Decor",
-  //       "Storage & Organization",
-  //       "Lighting",
-  //     ],
-  //   },
-  //   {
-  //     category: "Beauty & Personal Care",
-  //     subCategories: [
-  //       "Skincare",
-  //       "Makeup",
-  //       "Hair Care",
-  //       "Fragrances",
-  //       "Health Supplements",
-  //       "Personal Hygiene",
-  //     ],
-  //   },
-  //   {
-  //     category: "Sports & Outdoors",
-  //     subCategories: [
-  //       "Sports Equipment",
-  //       "Outdoor Gear",
-  //       "Camping & Hiking",
-  //       "Exercise & Fitness",
-  //       "Sportswear",
-  //     ],
-  //   },
-  //   {
-  //     category: "Books & Stationery",
-  //     subCategories: [
-  //       "Fiction & Non-fiction Books",
-  //       "Educational & Reference Books",
-  //       "Magazines & Comics",
-  //       "Office Supplies",
-  //       "Art & Craft Supplies",
-  //     ],
-  //   },
-  //   {
-  //     category: "Toys & Baby Products",
-  //     subCategories: [
-  //       "Toys & Games",
-  //       "Baby Clothing",
-  //       "Strollers & Car Seats",
-  //       "Diapers & Baby Care",
-  //     ],
-  //   },
-  //   {
-  //     category: "Food & Beverages",
-  //     subCategories: [
-  //       "Snacks & Packaged Foods",
-  //       "Beverages",
-  //       "Condiments & Spices",
-  //       "Fresh Produce",
-  //       "Organic & Health Foods",
-  //     ],
-  //   },
-  //   {
-  //     category: "Health & Wellness",
-  //     subCategories: [
-  //       "Supplements & Vitamins",
-  //       "Fitness Equipment",
-  //       "Wellness Gadgets",
-  //       "First Aid & Medical Supplies",
-  //     ],
-  //   },
-  //   {
-  //     category: "Automotive",
-  //     subCategories: [
-  //       "Car Accessories",
-  //       "Bike Accessories",
-  //       "Car Care Products",
-  //       "Replacement Parts",
-  //     ],
-  //   },
-  //   {
-  //     category: "Pet Supplies",
-  //     subCategories: [
-  //       "Pet Food",
-  //       "Pet Accessories",
-  //       "Pet Grooming",
-  //       "Pet Toys",
-  //     ],
-  //   },
-  //   {
-  //     category: "Grocery Essentials",
-  //     subCategories: [
-  //       "Household Cleaning Supplies",
-  //       "Paper Products",
-  //       "Laundry Supplies",
-  //     ],
-  //   },
-  //   {
-  //     category: "Garden & Outdoor Living",
-  //     subCategories: [
-  //       "Garden Tools",
-  //       "Plants & Seeds",
-  //       "Outdoor Furniture",
-  //       "Barbecue & Grill Supplies",
-  //     ],
-  //   },
-  // ];
 
   const productCategories = useSelector(state => state.productSlice.filterCategories)
 
   // loading state
   const [isloading,setIsLoading] = useState(false)
 
-  // default notification
-  const notification = {
-    title: "Add title message",
-    message: "Configurable",
-    type: "success",
-    insert: "top",
-    container: "top-right",
-    animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-    animationOut: ["animate__animated animate__fadeOut"] // `animate.css v4` classes
-  };
+  const [sizesInfo,setSizeInfo] = useState([])
 
   // seller details to retrive seller id and name (from redux) {userData.$id and userData.name}
   const userData = useSelector(state => state.authSlice.userData)
 
   //  1: Basic Product Information, 2: Pricing & Stock Details, 3: Product Description, 4: Product Images, 5: Review & Submit
+  // const setTitle = [
+  //   "Basic Product Information",
+  //   "Pricing & Stock Details",
+  //   "Product Description",
+  //   "Product Images",
+  //   "Review & Submit",
+  // ]
   const setTitle = [
     "Basic Product Information",
-    "Pricing & Stock Details",
-    "Product Description",
+    "Sizes Selection",
+    "Product Price & Description",
     "Product Images",
     "Review & Submit",
   ]
@@ -191,13 +64,15 @@ function AddProduct({ CloseModal }) {
 
   // product details
   const [productDetails, setProductDetails] = useState({
-    brandName: "",
-    productName: "",
-    category: "",
+    brand: "",
+    name: "",
     price: 0,
-    stock: 0,
     description: "",
   });
+
+  const [sizesToShow, setSizesToShow] = useState(["S", "M", "L", "XL", "XXL", "XXXL"])
+  const [chosenCategory, setChosenCategory] = useState('Men’s Shirts')
+  const [isChecked, setIsChecked] = useState([])
 
   // next and previous functions to navigate through form steps
   const nextStep = () =>
@@ -219,17 +94,16 @@ function AddProduct({ CloseModal }) {
     });
 
     // validate and handle stock input field
-    const handleStockInput = (e) => {
-      const st = e.target.value
-      if(Number.isInteger(Number(st)) && Number(st) > 0 && st !== ''){
-        handleProductData(e,'stock')
-      }
-    }
+    // const handleStockInput = (e) => {
+    //   const st = e.target.value
+    //   if(Number.isInteger(Number(st)) && Number(st) > 0 && st !== ''){
+    //     handleProductData(e,'stock')
+    //   }
+    // }
 
     // validate and handle image inputs
     const handleImageInput = (e) => {
       const files = Array.from(e.target.files)
-      // console.log(files)
 
       if(files.length !== 4){
         alert('Upload exactly 4 images')
@@ -238,60 +112,146 @@ function AddProduct({ CloseModal }) {
       } else{
         setImageFile(files)
         const urls = files.map((file) => URL.createObjectURL(file))
-        // console.log(urls)
         setImagePreview(urls.map(url => {return url}))
       }
     }
 
   // function to handle data
   const handleProductData = (e, type) => {
-    // console.log(e.target.value, type);
+    if(type === 'category') {
+      // setAvailableSizes(e.target.value)
+    }
     setProductDetails((prev) => ({ ...prev, [type]: `${e.target.value}` }));
   };
 
+  const categoriesAndSizes = [
+    {
+      "categories": [
+        "Men's Sneakers", "Men's Loafers", "Men's Formal Shoes", 
+        "Men's Sandals", "Men's Slippers", "Women's Sneakers", 
+        "Women's Flats", "Women's Heels", "Women's Sandals", "Women's Boots"
+      ],
+      "sizes": [5, 6, 7, 8, 9, 10, 11, 12]
+    },
+    {
+      "categories": [
+        "Men's Shirts", "Men's T-Shirts", "Men's Hoodies & Sweatshirts", 
+        "Men's Jackets", "Men's Coats", "Men's Activewear", "Men's Innerwear", 
+        "Women's Tops & T-Shirts", "Women's Dresses", "Women's Hoodies & Sweatshirts", 
+        "Women's Ethnic Wear", "Women's Activewear", "Women's Innerwear", 
+        "Men's Sweaters", "Men's Thermals", "Women's Sweaters", 
+        "Women's Jackets & Coats", "Men's Kurtas", "Men's Sherwanis", 
+        "Men's Ethnic Sets", "Women's Kurtas & Kurtis", "Women's Sarees", "Women's Lehenga Cholis",
+        "Hoodies & Sweatshirts", "Activewear"
+      ],
+      "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]
+    },
+    {
+      "categories": [
+        "Men's Jeans", "Men's Trousers", "Men's Shorts", 
+        "Women's Jeans", "Women's Trousers", "Women's Skirts", "Women's Shorts"
+      ],
+      "sizes": [28, 30, 32, 34, 36, 38, 40, 42, 44]
+    },
+    {
+      "categories": [
+        "Men's Watches", "Men's Belts", "Men's Sunglasses", 
+        "Men's Caps & Hats", "Men's Bags & Backpacks", 
+        "Women's Watches", "Women's Jewelry", "Women's Bags & Clutches", 
+        "Women's Belts", "Women's Scarves & Stoles"
+      ],
+      "sizes": ["OneSize"]
+    }
+  ]
+
+  const [selectedSizes, setSelectedSizes] = useState([]);
+
+  const handleSizeClick = (size) => {
+    setSelectedSizes((prev) => {
+      const exists = prev.find((item) => item.size === size);
+      if (exists) return prev; // Prevent duplicate selection
+      return [...prev, { size, quantity: 1 }];
+    });
+  };
+
+  const handleQuantityChange = (size, quantity) => {
+    setSelectedSizes((prev) =>
+      prev.map((item) =>
+        item.size === size ? { ...item, quantity: Number(quantity) } : item
+      )
+    );
+  };
+  
+  useEffect(() => {
+    categoriesAndSizes.map((item) => {
+      if(item.categories.includes(chosenCategory)) {
+        setSizesToShow(item.sizes)
+      }
+    })
+  },[chosenCategory])
+
+  // const handleSizeToggle = (key) => {
+  //   setIsChecked((prev) => (prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]))
+  // }
+
+  // const sizeInfoHandler = (size, quantity) => {
+  //   setSizeInfo(prev => {
+  //     console.log(prev)
+  //     // Check if size already exists
+  //     const exists = prev.find(item => item.size === size);
+      
+  //     if (exists) {
+  //       // Update the existing size's quantity
+  //       return prev.map(item => 
+  //         item.size === size ? { ...item, quantity: Number(quantity) } : item
+  //       );
+  //     } else {
+  //       // Add a new entry
+  //       return [...prev];
+  //     }
+  //   });
+  // };
+
+  // const sizeInfoHandler = (size, quantity) => {
+  //   setSizeInfo(prev => 
+  //     prev.map(item =>
+  //       item.size === String(size) ? { ...item, quantity: Number(quantity) } : item
+  //     )
+  //   );
+  // };
+
+  // const sizeInfoToggler = (size) => {
+  //   setSizeInfo(prev => {
+  //     console.log(prev)
+  //     if (prev.some(item => item.size === size)) {
+  //       // Remove the item if it exists
+  //       return prev.filter(item => item.size !== size);
+  //     } else {
+  //       // Add the item if it does not exist
+  //       return [...prev, { size: String(size), quantity: 1 }]; // Default quantity can be changed
+  //     }
+  //   });
+  // };
   
 
   // handle product submit and adding to database
   const handleSubmit = async () => {
     // join the brand name and product title
-    const productName = productDetails.brandName + " | " + productDetails.productName
     try{
       setIsLoading(true)
-      if(productDetails.name === '' || productDetails.category === '' || productDetails.description === ''|| productDetails.price === 0 || productDetails.stock === 0 || !imagefile){
+      if(!imagefile){
         throw new Error("Product details missing");
       }
 
-      // step 1: upload all 4 images to appwrite bucket and get the file id's
-      const uploadres = await Promise.all(
-        imagefile.map(async (file) => {
-          const result = await sellerService.addNewImage(file);
-          return result; // Assuming result contains the file ID or other relevant data
-        })
-      )
-
-      if(!uploadres) throw new Error("Error while uploading the images to database");
-      
-      const fileids = uploadres.map((file) => {
-        return file.$id
-      })
-
-      // add a new entry in productDetails named image containing array of file id of images
-      // setProductDetails(prev => ({...prev,'image': fileids, 'sellerid': userData.$id, 'seller': userData.name}))
-      const productData = {...productDetails,'image': fileids, 'sellerid': userData.$id, 'seller': userData.name, 'name': productName}
+      const productData = {...productDetails,'images': imagefile, 'stockInfo': sizesInfo, 'category': chosenCategory}
 
       // step 3: Add the product to products database
-      await sellerService.addNewProduct(productData)
+      await ProductService.addProduct(productData)
 
-      Store.addNotification({
-        ...notification,
+      triggerNotification({
         type: "success",
         title: "Product Added",
         message: "Product added successfully to the database",
-        container: 'top-right',
-        dismiss: {
-          duration: 2000,
-          pauseOnHover: true
-        }
       })
 
       // reset all the states
@@ -300,18 +260,12 @@ function AddProduct({ CloseModal }) {
       setImageFile([])
       setCurrentFormStep(0)
     } catch(error){
-      // console.log(error.message)
-      Store.addNotification({
-        ...notification,
+
+      triggerNotification({
         type: "danger",
         title: "Unknown Error Occurred",
         message: `${error.message}`,
-        container: 'top-right',
-        dismiss: {
-          duration: 2000,
-          pauseOnHover: true
-        }
-    })
+      })
     } finally{
       setIsLoading(false)
     }
@@ -353,8 +307,8 @@ function AddProduct({ CloseModal }) {
                   placeholder="Enter brand name"
                   className="w-fit p-2 text-base rounded-md focus:outline-none focus:shadow-inner focus:border-[1px] border-zinc-700"
                   required
-                  defaultValue={productDetails['brandName']}
-                  onChange={(e) => handleProductData(e, "brandName")}
+                  defaultValue={productDetails['brand']}
+                  onChange={(e) => handleProductData(e, "brand")}
                 />
                 <label htmlFor="name" className="text-base">
                   Product title
@@ -366,8 +320,8 @@ function AddProduct({ CloseModal }) {
                   placeholder="Enter product name"
                   className="w-fit p-2 text-base rounded-md focus:outline-none focus:shadow-inner focus:border-[1px] border-zinc-700"
                   required
-                  defaultValue={productDetails['productName']}
-                  onChange={(e) => handleProductData(e, "productName")}
+                  defaultValue={productDetails['name']}
+                  onChange={(e) => handleProductData(e, "name")}
                 />
               </div>
 
@@ -379,8 +333,11 @@ function AddProduct({ CloseModal }) {
                 <select
                   id="Category"
                   className="p-2 rounded-md w-fit"
-                  onChange={(e) => handleProductData(e, "category")}
-                  value={productDetails["category"]}
+                  onChange={(e) => {
+                    setIsChecked([])
+                    setSizeInfo([])
+                    setChosenCategory(e.target.value)}}
+                  value={chosenCategory}
                 >
                   {Object.entries(productCategories.men).map(([category, items]) => (
                                 items.map((item,key) => (
@@ -407,12 +364,17 @@ function AddProduct({ CloseModal }) {
               </div>
             </div>
           )}
-          
-          {/* Step 2 : Pricing & Stock Details */}
+
+          {/* Sizes  */}
           {CurrentFormStep === 1 && (
-            <div className="w-full p-5 flex font-DMSans flex-col gap-4">
-              {/* Product price field */}
-              <div className="flex flex-col gap-1">
+            <SizeSelection isChecked={isChecked} setIsChecked={setIsChecked} availableSizes={sizesToShow} sizesInfo={sizesInfo} setSizes={setSizeInfo}/>
+          )}
+
+          {/* Step 3 : Product Price & Description */}
+          {CurrentFormStep === 2 && (
+          <div className="w-full p-5 flex font-DMSans flex-col gap-4">
+            {/* Product price  */}
+            <div className="flex flex-col gap-1">
                 <label htmlFor="name" className="text-base">
                   Product Price
                 </label>
@@ -428,31 +390,6 @@ function AddProduct({ CloseModal }) {
                   value={productDetails['price']}
                 />
               </div>
-
-              {/* Product stock field  */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="name" className="text-base">
-                  Available Stock 
-                </label>
-                <input
-                  type="number"
-                  id="stock"
-                  placeholder="Enter stock quantity"
-                  className="w-fit p-2 text-base rounded-md focus:outline-none focus:shadow-inner focus:border-[1px] border-zinc-700"
-                  required
-                  defaultValue={productDetails['stock']}
-                  min={1} 
-                  step={1}
-                  onChange={handleStockInput}
-                  
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 3 : Product Description */}
-          {CurrentFormStep === 2 && (
-          <div className="w-full p-5 flex font-DMSans flex-col gap-4">
             {/* Product description field */}
             <div className="flex flex-col gap-1">
               <label htmlFor="description" className="text-base">
@@ -462,7 +399,7 @@ function AddProduct({ CloseModal }) {
               id="description" 
               placeholder="Enter product description" 
               required 
-              maxLength={600}  
+              maxLength={1000}  
               className="rounded-md focus:shadow-inner max-h-72 min-h-28 p-2 focus:outline-none focus:border-[1px] border-zinc-400 scrollbar-hide"
               onChange={(e) => handleProductData(e, "description")}
               value={productDetails['description']}
@@ -508,12 +445,12 @@ function AddProduct({ CloseModal }) {
                     <div className="flex w-full flex-col gap-2">
                       <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 pb-2">
                         <label className="text-zinc-700">Product name</label>
-                        <h3 className="text-base w-2/3 text-left">{productDetails.brandName + " | " + productDetails.productName}</h3>
+                        <h3 className="text-base w-2/3 text-left">{productDetails.brand + " | " + productDetails.name}</h3>
                       </div>
 
                       <div className="w-full flex items-center text-left justify-between border-b-[1px] border-zinc-300 py-2">
                         <label className="text-zinc-700">Product Category</label>
-                        <h3 className="text-base w-2/3 text-left">{productDetails.category}</h3>
+                        <h3 className="text-base w-2/3 text-left">{chosenCategory}</h3>
                       </div>
 
                       <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
@@ -523,7 +460,16 @@ function AddProduct({ CloseModal }) {
 
                       <div className="w-full flex items-center justify-between border-b-[1px] border-zinc-300 py-2">
                         <label className="text-zinc-700">Product stock</label>
-                        <h3 className="text-base w-2/3 text-left">{productDetails.stock}</h3>
+                        {/* <h3 className="text-base w-2/3 text-left">{productDetails.stock}</h3> */}
+                        <div  className="text-base w-2/3 text-left flex gap-2">
+                        {sizesInfo.map((info,key) => (
+                          
+                          <div key={key} className="flex items-center bg-gray-100 py-1 px-3 gap-2 rounded-lg text-sm font-medium text-gray-800 border border-gray-300 shadow-sm">
+                            <span className="font-semibold text-base text-green-600">{info.size}</span> <span className="text-gray-300">|</span> <span className="text-gray-500">{info.quantity}</span>
+                          </div>
+                          
+                        ))}
+                        </div>
                       </div>
 
                       <div className="w-full flex items-start justify-between border-b-[1px] border-zinc-300 py-2">
@@ -533,7 +479,7 @@ function AddProduct({ CloseModal }) {
 
                       <div className="w-full flex items-start justify-between border-zinc-300 pt-2">
                         <label className="text-zinc-700">Product images</label>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 w-2/3 justify-start">
                             {imagepreview && imagepreview.map((previewurl) => {
                               return (<img key={previewurl} src={`${previewurl}`} alt="uploaded images" className="w-20 rounded-md"/>)
                             })}
@@ -559,7 +505,7 @@ function AddProduct({ CloseModal }) {
             <button
               className="font-DMSans gap-2 flex justify-center items-center bg-[#00B75F] opacity-70 font-bold text-sm text-white w-24 h-10 rounded-md"
               onClick={handleSubmit}
-              disabled // temporarily disabled
+              // disabled // temporarily disabled
               >
                 Submit
             </button>
